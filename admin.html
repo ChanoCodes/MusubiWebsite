@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Musubi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: #F5F5F5;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .admin-header {
+            max-width: 1400px;
+            margin: 0 auto 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .logout-btn {
+            background-color: #DC3545;
+            color: #ffffff;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-family: inherit;
+        }
+
+        .logout-btn:hover {
+            background-color: #C82333;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .admin-tabs {
+            display: flex;
+            border-bottom: 2px solid #E0E0E0;
+            background-color: #F9F9F9;
+        }
+
+        .admin-tab {
+            padding: 1rem 2rem;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .admin-tab.active {
+            color: #FF6B35;
+            border-bottom-color: #FF6B35;
+            background-color: #ffffff;
+        }
+
+        .admin-tab:hover {
+            background-color: #F5F5F5;
+        }
+
+        .admin-tab-content {
+            display: none;
+            padding: 2rem;
+        }
+
+        .admin-tab-content.active {
+            display: block;
+        }
+
+        .tab-header {
+            margin-bottom: 2rem;
+        }
+
+        .tab-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .tab-subtitle {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid #E0E0E0;
+            background-color: #ffffff;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .filter-btn.active {
+            background-color: #FF6B35;
+            color: #ffffff;
+            border-color: #FF6B35;
+        }
+
+        .filter-btn:hover {
+            background-color: #F5F5F5;
+        }
+
+        .filter-btn.active:hover {
+            background-color: #E55A2B;
+        }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .data-table thead {
+            background-color: #FF6B35;
+            color: #ffffff;
+        }
+
+        .data-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .data-table tbody tr {
+            border-bottom: 1px solid #E0E0E0;
+            transition: background-color 0.2s;
+        }
+
+        .data-table tbody tr:hover {
+            background-color: #F9F9F9;
+        }
+
+        .data-table td {
+            padding: 1rem;
+            color: #333;
+            font-size: 0.95rem;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .btn-success {
+            background-color: #28A745;
+            color: #ffffff;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+        }
+
+        .btn-danger {
+            background-color: #DC3545;
+            color: #ffffff;
+        }
+
+        .btn-danger:hover {
+            background-color: #C82333;
+        }
+
+        .btn-primary {
+            background-color: #FF6B35;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background-color: #E55A2B;
+        }
+
+        .btn-warning {
+            background-color: #FFC107;
+            color: #333;
+        }
+
+        .btn-warning:hover {
+            background-color: #E0A800;
+        }
+
+        .btn-secondary {
+            background-color: #6C757D;
+            color: #ffffff;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5A6268;
+        }
+
+        .btn-small {
+            padding: 0.35rem 0.75rem;
+            font-size: 0.85rem;
+        }
+
+        .btn:disabled {
+            background-color: #CCCCCC;
+            cursor: not-allowed;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background-color: #FFF3CD;
+            color: #856404;
+            border: 1px solid #FFA500;
+        }
+
+        .status-preparing {
+            background-color: #D1ECF1;
+            color: #0C5460;
+            border: 1px solid #2196F3;
+        }
+
+        .status-ready {
+            background-color: #FFF3CD;
+            color: #856404;
+            border: 1px solid #FFC107;
+        }
+
+        .status-delivery {
+            background-color: #E7D4F8;
+            color: #6F42C1;
+            border: 1px solid #9C27B0;
+        }
+
+        .status-completed {
+            background-color: #D4EDDA;
+            color: #155724;
+            border: 1px solid #4CAF50;
+        }
+
+        .status-cancelled {
+            background-color: #F8D7DA;
+            color: #721C24;
+            border: 1px solid #F44336;
+        }
+
+        /* Analytics Cards */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .analytics-card {
+            background-color: #F9F9F9;
+            border-radius: 8px;
+            padding: 1.5rem;
+            border-left: 4px solid #FF6B35;
+        }
+
+        .analytics-card-title {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .analytics-card-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Settings Form */
+        .settings-form {
+            max-width: 600px;
+        }
+
+        .setting-item {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-label {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .setting-description {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #CCC;
+            transition: 0.4s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #FF6B35;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        .form-input {
+            padding: 0.75rem 1rem;
+            border: 2px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 1rem;
+            width: 100%;
+            max-width: 300px;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #FF6B35;
+        }
+
+        /* Loading and Empty States */
+        .loading-message,
+        .empty-message {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .empty-message h3 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Message */
+        .message {
+            display: none;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .message-success {
+            background-color: #D4EDDA;
+            color: #155724;
+            border: 1px solid #C3E6CB;
+            display: block;
+        }
+
+        .message-error {
+            background-color: #F8D7DA;
+            color: #721C24;
+            border: 1px solid #F5C6CB;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                margin: 0 1rem;
+            }
+
+            .admin-tabs {
+                overflow-x: auto;
+            }
+
+            .admin-tab {
+                padding: 1rem;
+                white-space: nowrap;
+            }
+
+            .data-table {
+                font-size: 0.85rem;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 0.75rem 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-header">
+        <h1 class="admin-title">Admin Dashboard</h1>
+        <button class="logout-btn" id="logoutBtn">Logout</button>
+    </div>
+    
+    <div class="admin-container">
+        <!-- Tabs -->
+        <div class="admin-tabs">
+            <button class="admin-tab active" data-tab="orders">Orders</button>
+            <button class="admin-tab" data-tab="analytics">Analytics</button>
+            <button class="admin-tab" data-tab="users">Users</button>
+            <button class="admin-tab" data-tab="feedback">Feedback</button>
+            <button class="admin-tab" data-tab="settings">Settings</button>
+        </div>
+
+        <!-- Orders Tab -->
+        <div id="ordersTab" class="admin-tab-content active">
+            <div class="tab-header">
+                <h2 class="tab-title">Order Management</h2>
+                <p class="tab-subtitle">View and manage all customer orders</p>
+            </div>
+
+            <div id="message" class="message"></div>
+
+            <div class="filter-section">
+                <button class="filter-btn active" data-filter="all">All Orders</button>
+                <button class="filter-btn" data-filter="Pending">Pending</button>
+                <button class="filter-btn" data-filter="Preparing">Preparing</button>
+                <button class="filter-btn" data-filter="Ready">Ready</button>
+                <button class="filter-btn" data-filter="Out for Delivery">Out for Delivery</button>
+                <button class="filter-btn" data-filter="Completed">Completed</button>
+            </div>
+
+            <div id="ordersLoading" class="loading-message">Loading orders...</div>
+            <div id="ordersEmpty" class="empty-message" style="display: none;">
+                <h3>No Orders</h3>
+                <p>No orders match your current filter.</p>
+            </div>
+
+            <table class="data-table" id="ordersTable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Items</th>
+                        <th>Total</th>
+                        <th>Method</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="ordersTableBody">
+                    <!-- Orders will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div id="analyticsTab" class="admin-tab-content">
+            <div class="tab-header">
+                <h2 class="tab-title">Analytics</h2>
+                <p class="tab-subtitle">Business insights and statistics</p>
+            </div>
+
+            <div id="analyticsLoading" class="loading-message">Loading analytics...</div>
+
+            <div id="analyticsContent" style="display: none;">
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <div class="analytics-card-title">Today's Orders</div>
+                        <div class="analytics-card-value" id="todayOrders">0</div>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="analytics-card-title">Today's Revenue</div>
+                        <div class="analytics-card-value" id="todayRevenue">₱0</div>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="analytics-card-title">Pending Orders</div>
+                        <div class="analytics-card-value" id="pendingOrders">0</div>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="analytics-card-title">Cancellation Rate</div>
+                        <div class="analytics-card-value" id="cancellationRate">0%</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem;">
+                    <h3 style="margin-bottom: 1rem; color: #333;">Best-Selling Musubi</h3>
+                    <div id="bestSellersList"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Tab -->
+        <div id="usersTab" class="admin-tab-content">
+            <div class="tab-header">
+                <h2 class="tab-title">User Management</h2>
+                <p class="tab-subtitle">Manage customer accounts and permissions</p>
+            </div>
+
+            <div id="usersMessage" class="message"></div>
+
+            <div id="usersLoading" class="loading-message">Loading users...</div>
+            <div id="usersEmpty" class="empty-message" style="display: none;">
+                <h3>No Pending Users</h3>
+                <p>All users have been approved.</p>
+            </div>
+
+            <div class="filter-section">
+                <button class="filter-btn active" data-user-filter="pending">Pending Approval</button>
+                <button class="filter-btn" data-user-filter="all">All Users</button>
+            </div>
+
+            <table class="data-table" id="usersTable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Username</th>
+                        <th>Orders</th>
+                        <th>Cancellations</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                    <!-- Users will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Feedback Tab -->
+        <div id="feedbackTab" class="admin-tab-content">
+            <div class="tab-header">
+                <h2 class="tab-title">Customer Feedback</h2>
+                <p class="tab-subtitle">View and manage customer feedback and ratings</p>
+            </div>
+
+            <div id="feedbackMessage" class="message"></div>
+
+            <div id="feedbackLoading" class="loading-message">Loading feedback...</div>
+            <div id="feedbackEmpty" class="empty-message" style="display: none;">
+                <h3>No Feedback Yet</h3>
+                <p>Customer feedback will appear here once submitted.</p>
+            </div>
+
+            <div class="filter-section">
+                <button class="filter-btn active" data-feedback-filter="all">All Feedback</button>
+                <button class="filter-btn" data-feedback-filter="5">5 Stars</button>
+                <button class="filter-btn" data-feedback-filter="4">4+ Stars</button>
+                <button class="filter-btn" data-feedback-filter="3">3+ Stars</button>
+                <button class="filter-btn" data-feedback-filter="low">Below 3 Stars</button>
+            </div>
+
+            <div id="feedbackList" style="display: none;">
+                <!-- Feedback items will be inserted here -->
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settingsTab" class="admin-tab-content">
+            <div class="tab-header">
+                <h2 class="tab-title">Settings</h2>
+                <p class="tab-subtitle">Configure system settings and preferences</p>
+            </div>
+
+            <div id="settingsMessage" class="message"></div>
+
+            <div id="settingsLoading" class="loading-message">Loading settings...</div>
+
+            <form id="settingsForm" class="settings-form" style="display: none;">
+                <div class="setting-item">
+                    <label class="setting-label">Free Delivery for Centro Libon</label>
+                    <p class="setting-description">Enable free delivery for customers in Centro Libon area</p>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="freeDeliveryToggle">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-item">
+                    <label class="setting-label" for="minOrderQuantity">Minimum Order Quantity</label>
+                    <p class="setting-description">Set the minimum number of items required per order</p>
+                    <input type="number" id="minOrderQuantity" class="form-input" min="1" value="1">
+                </div>
+
+                <div class="setting-item">
+                    <label class="setting-label" for="deliveryFee">Delivery Fee (Outside Centro Libon)</label>
+                    <p class="setting-description">Set the delivery fee for areas outside Centro Libon (in pesos)</p>
+                    <input type="number" id="deliveryFee" class="form-input" min="0" step="1" value="50">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save Settings</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="admin.js"></script>
+</body>
+</html>

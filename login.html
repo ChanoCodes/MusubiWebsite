@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In - Musubi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <img src="images/Onimisulogo.jpg" alt="OniMisu Logo" class="logo-image">
+                <span class="brand-name">OniMisu</span>
+            </div>
+            <nav class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="menu.html" class="nav-link">Menu</a>
+                <a href="orders.html" class="nav-link">Orders</a>
+            </nav>
+            <button class="order-now-btn">Order Now</button>
+        </div>
+    </header>
+
+    <!-- Login Section -->
+    <main>
+        <section class="signup-section">
+            <div class="signup-container">
+                <h1 class="signup-title">Welcome Back</h1>
+                <p class="signup-subtitle">Log in to your Musubi account to continue ordering</p>
+                
+                <form id="loginForm" class="signup-form">
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" id="email" name="email" class="form-input" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" id="password" name="password" class="form-input" required>
+                    </div>
+                    
+                    <button type="submit" class="signup-btn" id="loginBtn">
+                        Log In
+                    </button>
+                </form>
+                
+                <div id="message" class="message"></div>
+                
+                <p class="signup-footer">
+                    Don't have an account? <a href="signup.html" class="signup-link">Sign up</a>
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-column">
+                <div class="footer-logo-section">
+                    <img src="images/Onimisulogo.jpg" alt="OniMisu Logo" class="footer-logo-image">
+                    <span class="footer-brand-name">Musubi</span>
+                </div>
+                <p class="footer-description">Authentic handcrafted Musubi made fresh daily in Libon, Albay. Experience the perfect blend of traditional Japanese flavors with Filipino warmth.</p>
+                <div class="social-icons">
+                    <div class="social-icon">f</div>
+                    <div class="social-icon">O</div>
+                    <div class="social-icon">X</div>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h3 class="footer-heading">Quick Links</h3>
+                <a href="index.html" class="footer-link">Home</a>
+                <a href="menu.html" class="footer-link">Menu</a>
+                <a href="orders.html" class="footer-link">Order History</a>
+                <a href="contact.html" class="footer-link">Contact Us</a>
+            </div>
+            <div class="footer-column">
+                <h3 class="footer-heading">Contact</h3>
+                <p class="footer-contact-item">
+                    <span class="contact-icon">📍</span>
+                    Centro Libon, Libon, Albay, Philippines
+                </p>
+                <p class="footer-contact-item">
+                    <span class="contact-icon">📞</span>
+                    +63 123 456 7890
+                </p>
+                <p class="footer-contact-item">
+                    <span class="contact-icon">✉</span>
+                    hello@musubi.ph
+                </p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p class="footer-copyright">© 2025 Musubi Libon. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Firebase SDK -->
+    <script type="module" src="login.js"></script>
+    <!-- Shared navbar behavior -->
+    <script src="nav.js"></script>
+</body>
+</html>
+
