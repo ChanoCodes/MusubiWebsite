@@ -181,14 +181,14 @@ function createOrderRow(order) {
     const actions = getOrderActions(order);
     
     row.innerHTML = `
-        <td>#${order.id.substring(0, 12)}</td>
-        <td>${order.userName || order.userEmail || 'N/A'}</td>
-        <td>${itemsList}</td>
-        <td>₱${order.total?.toFixed(0) || '0'}</td>
-        <td>${fulfillmentMethodDisplay}</td>
-        <td>${statusBadge}</td>
-        <td>${formattedDate}</td>
-        <td>${actions}</td>
+        <td data-label="Order ID">#${order.id.substring(0, 12)}</td>
+        <td data-label="Customer">${order.userName || order.userEmail || 'N/A'}</td>
+        <td data-label="Items">${itemsList}</td>
+        <td data-label="Total">₱${order.total?.toFixed(0) || '0'}</td>
+        <td data-label="Method">${fulfillmentMethodDisplay}</td>
+        <td data-label="Status">${statusBadge}</td>
+        <td data-label="Date">${formattedDate}</td>
+        <td data-label="Actions">${actions}</td>
     `;
     
     // Add event listeners to action buttons
@@ -478,13 +478,13 @@ function createUserRow(user) {
         : `<button class="btn btn-success btn-small" onclick="window.adminManager.approveUser('${user.id}', '${user.name || 'User'}')">Approve</button>`;
     
     row.innerHTML = `
-        <td>${user.name || 'N/A'}</td>
-        <td>${user.email || 'N/A'}</td>
-        <td>${user.username || 'N/A'}</td>
-        <td>${user.totalOrders || 0}</td>
-        <td>${user.cancellations || 0} ${warningText}</td>
-        <td>${statusBadge} ${isBlocked ? '<span style="color: red;">(Blocked)</span>' : ''}</td>
-        <td>${actions}</td>
+        <td data-label="Name">${user.name || 'N/A'}</td>
+        <td data-label="Email">${user.email || 'N/A'}</td>
+        <td data-label="Username">${user.username || 'N/A'}</td>
+        <td data-label="Orders">${user.totalOrders || 0}</td>
+        <td data-label="Cancellations">${user.cancellations || 0} ${warningText}</td>
+        <td data-label="Status">${statusBadge} ${isBlocked ? '<span style="color: red;">(Blocked)</span>' : ''}</td>
+        <td data-label="Actions">${actions}</td>
     `;
     
     return row;

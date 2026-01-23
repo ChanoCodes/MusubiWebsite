@@ -448,27 +448,204 @@
             display: block;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 767px) {
+            body {
+                padding: 1rem 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .admin-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+                margin-bottom: 1.5rem;
+                padding: 0;
+            }
+
+            .admin-title {
+                font-size: 1.5rem !important;
+                text-align: center;
+            }
+
+            .logout-btn {
+                width: 100%;
+                padding: 0.75rem;
+                font-size: 0.9rem;
+            }
+
             .admin-container {
-                margin: 0 1rem;
+                margin: 0;
+                border-radius: 8px;
             }
 
             .admin-tabs {
                 overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                flex-wrap: nowrap;
+                border-bottom: 1px solid #E0E0E0;
             }
 
             .admin-tab {
-                padding: 1rem;
+                padding: 0.75rem 1rem;
+                font-size: 0.85rem;
                 white-space: nowrap;
+                min-width: fit-content;
+            }
+
+            .admin-tab-content {
+                padding: 1rem 0.75rem;
+            }
+
+            .tab-header {
+                margin-bottom: 1.25rem;
+            }
+
+            .tab-title {
+                font-size: 1.2rem !important;
+                margin-bottom: 0.25rem;
+            }
+
+            .tab-subtitle {
+                font-size: 0.8rem !important;
+            }
+
+            .filter-section {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+                margin-bottom: 1rem;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                padding-bottom: 0.5rem;
+            }
+
+            .filter-btn {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.8rem;
+                white-space: nowrap;
+                min-width: fit-content;
+            }
+
+            /* Tables - make scrollable on mobile */
+            .data-table-wrapper {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                width: 100%;
+                -ms-overflow-style: -ms-autohiding-scrollbar;
+                margin: 1rem 0;
+                border: 1px solid #E0E0E0;
+                border-radius: 8px;
+                background-color: #ffffff;
+                scrollbar-width: thin;
             }
 
             .data-table {
+                min-width: 650px;
+                font-size: 0.7rem;
+                width: 100%;
+                margin: 0;
+            }
+
+            .data-table thead {
+                position: sticky;
+                top: 0;
+                z-index: 5;
+            }
+
+            .data-table th {
+                padding: 0.6rem 0.5rem;
+                font-size: 0.7rem;
+                white-space: nowrap;
+                background-color: #FF6B35;
+                color: #ffffff;
+                font-weight: 600;
+            }
+
+            .data-table td {
+                padding: 0.6rem 0.5rem;
+                font-size: 0.7rem;
+                white-space: normal;
+                word-wrap: break-word;
+                max-width: 120px;
+            }
+            
+            .data-table td:last-child {
+                white-space: nowrap;
+                max-width: none;
+            }
+
+            .data-table tbody tr {
+                border-bottom: 1px solid #F0F0F0;
+            }
+
+            .data-table tbody tr:last-child {
+                border-bottom: none;
+            }
+
+            /* Buttons - full width or properly sized for touch */
+            .btn, .btn-small {
+                padding: 0.6rem 1rem;
+                font-size: 0.85rem;
+                min-height: 44px;
+                width: 100%;
+                margin-bottom: 0.5rem;
+                display: block;
+            }
+
+            .btn:last-child {
+                margin-bottom: 0;
+            }
+
+            /* Analytics cards stack on mobile */
+            .analytics-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .analytics-card {
+                padding: 1rem;
+            }
+
+            .analytics-card-title {
                 font-size: 0.85rem;
             }
 
-            .data-table th,
-            .data-table td {
-                padding: 0.75rem 0.5rem;
+            .analytics-card-value {
+                font-size: 1.5rem;
+            }
+
+            /* Settings form */
+            .settings-form {
+                max-width: 100%;
+            }
+
+            .setting-item {
+                margin-bottom: 1.5rem;
+                padding-bottom: 1.5rem;
+            }
+
+            .setting-label {
+                font-size: 0.95rem;
+            }
+
+            .setting-description {
+                font-size: 0.85rem;
+            }
+
+            .form-input {
+                max-width: 100%;
+                width: 100%;
+            }
+
+            /* Loading and empty states */
+            .loading-message,
+            .empty-message {
+                padding: 2rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .empty-message h3 {
+                font-size: 1.1rem;
             }
         }
     </style>
@@ -588,22 +765,26 @@
                 <button class="filter-btn" data-user-filter="all">All Users</button>
             </div>
 
-            <table class="data-table" id="usersTable" style="display: none;">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Username</th>
-                        <th>Orders</th>
-                        <th>Cancellations</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="usersTableBody">
-                    <!-- Users will be inserted here -->
-                </tbody>
-            </table>
+            <div class="data-table-wrapper">
+            <div class="data-table-wrapper">
+                <table class="data-table" id="usersTable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Username</th>
+                            <th>Orders</th>
+                            <th>Cancellations</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <!-- Users will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+            </div>
         </div>
 
         <!-- Feedback Tab -->
