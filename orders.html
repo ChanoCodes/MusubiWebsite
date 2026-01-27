@@ -1,157 +1,217 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Order History - Musubi</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" type="image/png" href="images/Onimisulogo.jpg" />
+  </head>
+  <body>
     <!-- Header -->
     <header class="header">
-        <div class="header-content">
-            <div class="logo-section">
-                <img src="images/Onimisulogo.jpg" alt="OniMisu Logo" class="logo-image">
-                <span class="brand-name">OniMisu</span>
-            </div>
-            <nav class="nav-links">
-                <a href="index.html" class="nav-link">Home</a>
-                <a href="menu.html" class="nav-link">Menu</a>
-                <a href="orders.html" class="nav-link active">Orders</a>
-            </nav>
-            <div class="header-actions">
-                <div id="cartIcon" class="cart-icon" style="display: none;">
-                    <span class="cart-icon-symbol">🛒</span>
-                    <span id="cartBadge" class="cart-badge" style="display: none;">0</span>
-                </div>
-                <button class="order-now-btn">Order Now</button>
-            </div>
+      <div class="header-content">
+        <div class="logo-section">
+          <img
+            src="images/Onimisulogo.jpg"
+            alt="OniMisu Logo"
+            class="logo-image"
+          />
+          <span class="brand-name">OniMisu</span>
         </div>
+        <nav class="nav-links">
+          <a href="index.html" class="nav-link">Home</a>
+          <a href="menu.html" class="nav-link">Menu</a>
+          <a href="orders.html" class="nav-link active">Orders</a>
+        </nav>
+        <div class="header-actions">
+          <div id="cartIcon" class="cart-icon" style="display: none">
+            <span class="cart-icon-symbol">🛒</span>
+            <span id="cartBadge" class="cart-badge" style="display: none"
+              >0</span
+            >
+          </div>
+          <button class="order-now-btn">Order Now</button>
+        </div>
+      </div>
     </header>
 
     <!-- Order History Section -->
     <main class="order-history-section">
-        <div class="order-history-container">
-            <h1 class="order-history-title">Order History</h1>
-            <p class="order-history-subtitle">Track and manage your Musubi orders</p>
-            
-            <div id="loadingMessage" class="loading-message">Loading orders...</div>
-            <div id="noOrdersMessage" class="no-orders-message" style="display: none;">
-                <h3>No Orders Yet</h3>
-                <p>Start ordering delicious Musubi to see your order history here.</p>
-                <a href="menu.html" class="order-now-link-btn">Browse Menu</a>
-            </div>
-            
-            <div id="ordersList" class="orders-list"></div>
+      <div class="order-history-container">
+        <h1 class="order-history-title">Order History</h1>
+        <p class="order-history-subtitle">
+          Track and manage your Musubi orders
+        </p>
+
+        <div id="loadingMessage" class="loading-message">Loading orders...</div>
+        <div
+          id="noOrdersMessage"
+          class="no-orders-message"
+          style="display: none"
+        >
+          <h3>No Orders Yet</h3>
+          <p>Start ordering delicious Musubi to see your order history here.</p>
+          <a href="menu.html" class="order-now-link-btn">Browse Menu</a>
         </div>
+
+        <div id="ordersList" class="orders-list"></div>
+      </div>
     </main>
 
     <!-- Order Details Modal -->
     <div id="orderModal" class="order-modal-overlay">
-        <div class="order-modal-content">
-            <div class="order-modal-header">
-                <h2 id="orderModalTitle">Order Details</h2>
-                <button class="order-modal-close" onclick="window.orderManager.closeOrderModal()">×</button>
-            </div>
-            <div id="orderModalBody" class="order-modal-body">
-                <!-- Order details will be inserted here -->
-            </div>
+      <div class="order-modal-content">
+        <div class="order-modal-header">
+          <h2 id="orderModalTitle">Order Details</h2>
+          <button
+            class="order-modal-close"
+            onclick="window.orderManager.closeOrderModal()"
+          >
+            ×
+          </button>
         </div>
+        <div id="orderModalBody" class="order-modal-body">
+          <!-- Order details will be inserted here -->
+        </div>
+      </div>
     </div>
 
     <!-- Feedback Modal -->
-    <div id="feedbackModal" class="popup-overlay" style="display: none;">
-        <div class="popup-content" style="max-width: 500px;">
-            <h2 class="popup-title">Leave Feedback</h2>
-            <form id="feedbackForm" class="feedback-form">
-                <div class="form-group">
-                    <label class="form-label">Rating (0.5 - 5 stars)</label>
-                    <div class="star-rating" id="starRating">
-                        <input type="radio" name="rating" value="0.5" id="star0.5">
-                        <label for="star0.5" class="star-label">½</label>
-                        <input type="radio" name="rating" value="1" id="star1">
-                        <label for="star1" class="star-label">★</label>
-                        <input type="radio" name="rating" value="1.5" id="star1.5">
-                        <label for="star1.5" class="star-label">1½</label>
-                        <input type="radio" name="rating" value="2" id="star2">
-                        <label for="star2" class="star-label">★</label>
-                        <input type="radio" name="rating" value="2.5" id="star2.5">
-                        <label for="star2.5" class="star-label">2½</label>
-                        <input type="radio" name="rating" value="3" id="star3">
-                        <label for="star3" class="star-label">★</label>
-                        <input type="radio" name="rating" value="3.5" id="star3.5">
-                        <label for="star3.5" class="star-label">3½</label>
-                        <input type="radio" name="rating" value="4" id="star4">
-                        <label for="star4" class="star-label">★</label>
-                        <input type="radio" name="rating" value="4.5" id="star4.5">
-                        <label for="star4.5" class="star-label">4½</label>
-                        <input type="radio" name="rating" value="5" id="star5" checked>
-                        <label for="star5" class="star-label">★</label>
-                    </div>
-                    <div id="ratingDisplay" style="text-align: center; margin-top: 0.5rem; color: #666; font-size: 0.9rem;">Selected: 5 stars</div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="feedbackText">Your Feedback</label>
-                    <textarea id="feedbackText" class="form-input" rows="5" placeholder="Share your experience with our Musubi and website..." required></textarea>
-                </div>
-                <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
-                    <button type="button" class="popup-btn popup-btn-secondary" onclick="window.feedbackManager.closeFeedbackModal()" style="flex: 1;">Cancel</button>
-                    <button type="submit" class="popup-btn" style="flex: 1;">Submit Feedback</button>
-                </div>
-            </form>
-        </div>
+    <div id="feedbackModal" class="popup-overlay" style="display: none">
+      <div class="popup-content" style="max-width: 500px">
+        <h2 class="popup-title">Leave Feedback</h2>
+        <form id="feedbackForm" class="feedback-form">
+          <div class="form-group">
+            <label class="form-label">Rating (0.5 - 5 stars)</label>
+            <div class="star-rating" id="starRating">
+              <input type="radio" name="rating" value="0.5" id="star0.5" />
+              <label for="star0.5" class="star-label">½</label>
+              <input type="radio" name="rating" value="1" id="star1" />
+              <label for="star1" class="star-label">★</label>
+              <input type="radio" name="rating" value="1.5" id="star1.5" />
+              <label for="star1.5" class="star-label">1½</label>
+              <input type="radio" name="rating" value="2" id="star2" />
+              <label for="star2" class="star-label">★</label>
+              <input type="radio" name="rating" value="2.5" id="star2.5" />
+              <label for="star2.5" class="star-label">2½</label>
+              <input type="radio" name="rating" value="3" id="star3" />
+              <label for="star3" class="star-label">★</label>
+              <input type="radio" name="rating" value="3.5" id="star3.5" />
+              <label for="star3.5" class="star-label">3½</label>
+              <input type="radio" name="rating" value="4" id="star4" />
+              <label for="star4" class="star-label">★</label>
+              <input type="radio" name="rating" value="4.5" id="star4.5" />
+              <label for="star4.5" class="star-label">4½</label>
+              <input type="radio" name="rating" value="5" id="star5" checked />
+              <label for="star5" class="star-label">★</label>
+            </div>
+            <div
+              id="ratingDisplay"
+              style="
+                text-align: center;
+                margin-top: 0.5rem;
+                color: #666;
+                font-size: 0.9rem;
+              "
+            >
+              Selected: 5 stars
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="feedbackText">Your Feedback</label>
+            <textarea
+              id="feedbackText"
+              class="form-input"
+              rows="5"
+              placeholder="Share your experience with our Musubi and website..."
+              required
+            ></textarea>
+          </div>
+          <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem">
+            <button
+              type="button"
+              class="popup-btn popup-btn-secondary"
+              onclick="window.feedbackManager.closeFeedbackModal()"
+              style="flex: 1"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="popup-btn" style="flex: 1">
+              Submit Feedback
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-column">
-                <div class="footer-logo-section">
-                    <img src="images/Onimisulogo.jpg" alt="OniMisu Logo" class="footer-logo-image">
-                    <span class="footer-brand-name">Musubi</span>
-                </div>
-                <p class="footer-description">Authentic handcrafted Musubi made fresh daily in Libon, Albay. Experience the perfect blend of traditional Japanese flavors with Filipino warmth.</p>
-                <div class="social-icons">
-                    <div class="social-icon">f</div>
-                    <div class="social-icon">O</div>
-                    <div class="social-icon">X</div>
-                </div>
-            </div>
-            <div class="footer-column">
-                <h3 class="footer-heading">Quick Links</h3>
-                <a href="index.html" class="footer-link">Home</a>
-                <a href="menu.html" class="footer-link">Menu</a>
-                <a href="orders.html" class="footer-link">Order History</a>
-                <a href="contact.html" class="footer-link">Contact Us</a>
-            </div>
-            <div class="footer-column">
-                <h3 class="footer-heading">Contact</h3>
-                <p class="footer-contact-item">
-                    <span class="contact-icon">📍</span>
-                    Centro Libon, Libon, Albay, Philippines
-                </p>
-                <p class="footer-contact-item">
-                    <span class="contact-icon">📞</span>
-                    +63 123 456 7890
-                </p>
-                <p class="footer-contact-item">
-                    <span class="contact-icon">✉</span>
-                    hello@musubi.ph
-                </p>
-            </div>
+      <div class="footer-content">
+        <div class="footer-column">
+          <div class="footer-logo-section">
+            <img
+              src="images/Onimisulogo.jpg"
+              alt="OniMisu Logo"
+              class="footer-logo-image"
+            />
+            <span class="footer-brand-name">Musubi</span>
+          </div>
+          <p class="footer-description">
+            Authentic handcrafted Musubi made fresh daily in Libon, Albay.
+            Experience the perfect blend of traditional Japanese flavors with
+            Filipino warmth.
+          </p>
+          <div class="social-icons">
+            <div class="social-icon">f</div>
+            <div class="social-icon">O</div>
+            <div class="social-icon">X</div>
+          </div>
         </div>
-        <div class="footer-bottom">
-            <p class="footer-copyright">© 2026 Musubi Libon. All rights reserved.</p>
-            
+        <div class="footer-column">
+          <h3 class="footer-heading">Quick Links</h3>
+          <a href="index.html" class="footer-link">Home</a>
+          <a href="menu.html" class="footer-link">Menu</a>
+          <a href="orders.html" class="footer-link">Order History</a>
+          <a href="contact.html" class="footer-link">Contact Us</a>
         </div>
+        <div class="footer-column">
+          <h3 class="footer-heading">Contact</h3>
+          <p class="footer-contact-item">
+            <span class="contact-icon">📍</span>
+            Centro Libon, Libon, Albay, Philippines
+          </p>
+          <p class="footer-contact-item">
+            <span class="contact-icon">📞</span>
+            +63 123 456 7890
+          </p>
+          <p class="footer-contact-item">
+            <span class="contact-icon">✉</span>
+            hello@musubi.ph
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-copyright">
+          © 2026 Musubi Libon. All rights reserved.
+        </p>
+      </div>
     </footer>
 
     <!-- Floating Feedback Icon -->
-    <div class="feedback-icon" id="feedbackIcon" onclick="window.openFeedbackFromIcon()" title="Leave Feedback">
-        💬
+    <div
+      class="feedback-icon"
+      id="feedbackIcon"
+      onclick="window.openFeedbackFromIcon()"
+      title="Leave Feedback"
+    >
+      💬
     </div>
 
     <!-- Scripts -->
@@ -160,25 +220,30 @@
     <!-- Shared navbar behavior -->
     <script src="nav.js"></script>
     <script>
-        // Open feedback modal from icon
-        window.openFeedbackFromIcon = function() {
-            // Find first completed order
-            import('./orders.js').then(() => {
-                if (window.allOrders && window.allOrders.length > 0) {
-                    const completedOrder = window.allOrders.find(o => o.status === 'Completed');
-                    if (completedOrder) {
-                        if (window.feedbackManager) {
-                            window.feedbackManager.openFeedbackModal(completedOrder.id);
-                        }
-                    } else {
-                        alert('You need to complete an order first before leaving feedback.');
-                    }
-                } else {
-                    alert('You need to complete an order first before leaving feedback.');
-                }
-            });
-        };
+      // Open feedback modal from icon
+      window.openFeedbackFromIcon = function () {
+        // Find first completed order
+        import("./orders.js").then(() => {
+          if (window.allOrders && window.allOrders.length > 0) {
+            const completedOrder = window.allOrders.find(
+              (o) => o.status === "Completed",
+            );
+            if (completedOrder) {
+              if (window.feedbackManager) {
+                window.feedbackManager.openFeedbackModal(completedOrder.id);
+              }
+            } else {
+              alert(
+                "You need to complete an order first before leaving feedback.",
+              );
+            }
+          } else {
+            alert(
+              "You need to complete an order first before leaving feedback.",
+            );
+          }
+        });
+      };
     </script>
-</body>
+  </body>
 </html>
-
