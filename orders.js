@@ -3,6 +3,9 @@ import { auth, db } from './firebase.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 import { collection, query, where, getDocs, orderBy, addDoc, onSnapshot, doc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
+// Maximum total musubi per order (must match cart.js)
+const MAX_ORDER_LIMIT = 30;
+
 // Product data (same as cart.js)
 const PRODUCTS = {
     'special-musubi': { name: 'Special Musubi', price: 45 },
@@ -580,6 +583,13 @@ async function saveEditedOrder(orderId) {
         showNotification('Order must have at least one item.', 'error');
         return;
     }
+
+    // Validate total quantity does not exceed limit
+    const totalQty = window.editOrderState.items.reduce((sum, item) => sum + item.quantity, 0);
+    if (totalQty > MAX_ORDER_LIMIT) {
+        showNotification('Max order is 30 only.', 'error');
+        return;
+    }
     
     try {
         const orderRef = doc(db, 'orders', orderId);
@@ -807,4 +817,3 @@ window.orderManager = {
     saveEditedOrder,
     closeEditOrderModal
 };
-

@@ -8,7 +8,7 @@ const messageDiv = document.getElementById('message');
 
 // Pre-configured admin
 const ADMIN_EMAIL = 'admin@gmail.com';
-const ADMIN_PASSWORD = 'musubi12345';
+
 
 loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -26,23 +26,22 @@ loginForm.addEventListener('submit', async (e) => {
     messageDiv.textContent = '';
 
     try {
-        // 🔹 Admin login (pre-configured) - bypasses Firebase Auth
-        if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-            // Set admin session flag
-            sessionStorage.setItem('isAdmin', 'true');
-            sessionStorage.setItem('adminEmail', ADMIN_EMAIL);
-            
-            // Show welcome message
-            alert('Welcome Admin!');
-            
-            // Re-enable button before redirect
-            loginBtn.disabled = false;
-            loginBtn.textContent = 'Log In';
-            
-            // Redirect to admin dashboard
-            window.location.href = 'admin.html';
-            return; // Stop execution
-        }
+// 🔹 Admin login — uses Firebase Auth so Firestore rules work
+if (email === ADMIN_EMAIL) {
+    const adminCredential = await signInWithEmailAndPassword(auth, email, password);
+    const adminUser = adminCredential.user;
+    await adminUser.getIdToken(true); // Ensure token is fresh
+
+    sessionStorage.setItem('isAdmin', 'true');
+    sessionStorage.setItem('adminEmail', ADMIN_EMAIL);
+
+    showLoginPopup('Welcome Admin! Redirecting...', 'success');
+
+    setTimeout(() => {
+        window.location.href = 'admin.html';
+    }, 1500);
+    return;
+}
 
         // 🔹 Regular user login (Firebase Auth)
         const userCredential = await signInWithEmailAndPassword(auth, email, password);

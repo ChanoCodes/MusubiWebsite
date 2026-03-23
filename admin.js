@@ -34,28 +34,26 @@ tabs.forEach(tab => {
 function checkAdminAccess() {
     const isAdminSession = sessionStorage.getItem('isAdmin') === 'true';
     const adminEmailSession = sessionStorage.getItem('adminEmail');
-    
+
     if (isAdminSession && adminEmailSession === ADMIN_EMAIL) {
-        // Admin is logged in via session, load initial tab
-        loadTabData('orders');
+        // Session exists — verify Firebase Auth token is also valid
+        onAuthStateChanged(auth, (user) => {
+            if (user && user.email === ADMIN_EMAIL) {
+                // Firebase Auth confirmed — safe to load admin data
+                loadTabData('orders');
+            } else {
+                // Session exists but Firebase Auth is missing or wrong user
+                // Clear stale session and redirect to login
+                sessionStorage.removeItem('isAdmin');
+                sessionStorage.removeItem('adminEmail');
+                window.location.href = 'login.html';
+            }
+        });
         return;
     }
-    
-    // No admin session found, check Firebase Auth state
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-        if (sessionStorage.getItem('isAdmin') === 'true') {
-            unsubscribe();
-            return;
-        }
-        
-        if (user) {
-            unsubscribe();
-            window.location.href = 'index.html';
-        } else {
-            unsubscribe();
-            window.location.href = 'login.html';
-        }
-    });
+
+    // No admin session at all — redirect to login
+    window.location.href = 'login.html';
 }
 
 // Load tab data based on active tab
@@ -474,8 +472,12 @@ function createUserRow(user) {
                 ? `<button class="btn btn-success btn-small" onclick="window.adminManager.unblockUser('${user.id}')">Unblock</button>`
                 : `<button class="btn btn-danger btn-small" onclick="window.adminManager.blockUser('${user.id}')">Block</button>`
             }
+            <button class="btn btn-danger btn-small" style="margin-top:4px;" onclick="window.adminManager.deleteUser('${user.id}', '${user.email || 'this user'}')">Delete</button>
         `
-        : `<button class="btn btn-success btn-small" onclick="window.adminManager.approveUser('${user.id}', '${user.name || 'User'}')">Approve</button>`;
+        : `
+            <button class="btn btn-success btn-small" onclick="window.adminManager.approveUser('${user.id}', '${user.name || 'User'}')">Approve</button>
+            <button class="btn btn-danger btn-small" style="margin-top:4px;" onclick="window.adminManager.deleteUser('${user.id}', '${user.email || 'this user'}')">Delete</button>
+        `;
     
     row.innerHTML = `
         <td data-label="Name">${user.name || 'N/A'}</td>
@@ -687,6 +689,18 @@ async function loadSettings() {
         
         document.getElementById('settingsLoading').style.display = 'none';
         document.getElementById('settingsForm').style.display = 'block';
+
+        // Add Clear Database button if not already present
+        if (!document.getElementById('clearDatabaseBtn')) {
+            const dangerZone = document.createElement('div');
+            dangerZone.style.cssText = 'margin-top:2rem;padding:1.5rem;border:1px solid #f5c6cb;border-radius:8px;background:#fff8f8;';
+            dangerZone.innerHTML = `
+                <h3 style="color:#dc3545;margin:0 0 0.5rem;">⚠️ Danger Zone</h3>
+                <p style="color:#666;font-size:0.9rem;margin:0 0 1rem;">Permanently deletes all orders, users, and feedback. This cannot be undone.</p>
+                <button id="clearDatabaseBtn" class="btn btn-danger" onclick="window.adminManager.clearDatabase()">Clear Database</button>
+            `;
+            document.getElementById('settingsForm').after(dangerZone);
+        }
         
     } catch (error) {
         console.error('Error loading settings:', error);
@@ -717,7 +731,94 @@ document.getElementById('settingsForm')?.addEventListener('submit', async (e) =>
     }
 });
 
-// ==================== UTILITY FUNCTIONS ====================
+// ==================== DELETE USER ====================
+async function deleteUser(userId, userEmail) {
+    // Show confirmation modal
+    const confirmed = await showConfirmModal(
+        '🗑️ Delete User',
+        `Are you sure you want to delete <strong>${userEmail}</strong>?<br><small style="color:#999;">This will remove their Firestore data. Firebase Auth account requires server-side deletion.</small>`
+    );
+    if (!confirmed) return;
+
+    try {
+        // Delete Firestore user document
+        const userRef = doc(db, 'users', userId);
+        const { deleteDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        await deleteDoc(userRef);
+
+        showMessage(`User "${userEmail}" deleted successfully.`, 'success', 'usersMessage');
+        loadUsers();
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        showMessage('Error deleting user. Please try again.', 'error', 'usersMessage');
+    }
+}
+
+// ==================== CLEAR DATABASE ====================
+async function clearDatabase() {
+    const confirmed = await showConfirmModal(
+        '⚠️ Clear Database',
+        'Are you sure you want to clear ALL data?<br><strong style="color:#dc3545;">This will permanently delete all orders, users, and feedback.</strong>'
+    );
+    if (!confirmed) return;
+
+    // Second confirmation for destructive action
+    const doubleConfirmed = await showConfirmModal(
+        '⚠️ Final Warning',
+        'This action <strong>cannot be undone</strong>. Type your intent carefully.<br>All orders, users, and feedback will be wiped.'
+    );
+    if (!doubleConfirmed) return;
+
+    try {
+        const { deleteDoc, getDocs: _getDocs } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        const collectionsToDelete = ['orders', 'users', 'feedback'];
+
+        for (const colName of collectionsToDelete) {
+            const snapshot = await _getDocs(collection(db, colName));
+            const deletePromises = snapshot.docs.map(d => deleteDoc(doc(db, colName, d.id)));
+            await Promise.all(deletePromises);
+        }
+
+        showMessage('Database cleared successfully.', 'success', 'message');
+
+        // Reload current tab
+        loadTabData('orders');
+    } catch (error) {
+        console.error('Error clearing database:', error);
+        showMessage('Error clearing database. Please try again.', 'error', 'message');
+    }
+}
+
+// ==================== REUSABLE CONFIRM MODAL ====================
+// Returns a Promise<boolean> — resolves true on confirm, false on cancel
+function showConfirmModal(title, bodyHtml) {
+    return new Promise((resolve) => {
+        const existing = document.getElementById('adminConfirmModal');
+        if (existing) existing.remove();
+
+        const modal = document.createElement('div');
+        modal.id = 'adminConfirmModal';
+        modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;';
+        modal.innerHTML = `
+            <div style="background:#fff;border-radius:12px;padding:2rem;max-width:400px;width:90%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.2);">
+                <h3 style="margin:0 0 0.75rem;color:#333;">${title}</h3>
+                <p style="color:#555;margin:0 0 1.5rem;line-height:1.5;">${bodyHtml}</p>
+                <div style="display:flex;gap:0.75rem;justify-content:center;">
+                    <button id="confirmModalCancel" style="flex:1;padding:0.75rem;border:1px solid #ddd;border-radius:8px;background:#fff;cursor:pointer;font-size:0.95rem;">Cancel</button>
+                    <button id="confirmModalOK" style="flex:1;padding:0.75rem;border:none;border-radius:8px;background:#dc3545;color:#fff;cursor:pointer;font-size:0.95rem;">Confirm</button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        document.getElementById('confirmModalCancel').addEventListener('click', () => { modal.remove(); resolve(false); });
+        document.getElementById('confirmModalOK').addEventListener('click', () => { modal.remove(); resolve(true); });
+        modal.addEventListener('click', (e) => { if (e.target === modal) { modal.remove(); resolve(false); } });
+    });
+}
+
+
 function formatDate(date) {
     const options = { 
         year: 'numeric', 
@@ -744,33 +845,58 @@ function showMessage(message, type, elementId = 'message') {
     }
 }
 
-// Handle logout
-logoutBtn.addEventListener('click', async () => {
-    try {
-        sessionStorage.removeItem('isAdmin');
-        sessionStorage.removeItem('adminEmail');
-        
-        try {
-            await signOut(auth);
-        } catch (authError) {
-            // Ignore auth errors (admin doesn't use Firebase Auth)
-        }
-        
-        window.location.href = 'login.html';
-    } catch (error) {
-        console.error('Error signing out:', error);
-        sessionStorage.removeItem('isAdmin');
-        sessionStorage.removeItem('adminEmail');
-        window.location.href = 'login.html';
-    }
+// Handle logout — show confirmation before signing out
+logoutBtn.addEventListener('click', () => {
+    showLogoutConfirm();
 });
+
+function showLogoutConfirm() {
+    // Remove existing modal if any
+    const existing = document.getElementById('adminLogoutModal');
+    if (existing) existing.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'adminLogoutModal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;';
+    modal.innerHTML = `
+        <div style="background:#fff;border-radius:12px;padding:2rem;max-width:380px;width:90%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.2);">
+            <div style="font-size:2rem;margin-bottom:1rem;">🚪</div>
+            <h3 style="margin:0 0 0.5rem;color:#333;">Logout</h3>
+            <p style="color:#666;margin:0 0 1.5rem;">Are you sure you want to logout?</p>
+            <div style="display:flex;gap:0.75rem;justify-content:center;">
+                <button id="cancelAdminLogout" style="flex:1;padding:0.75rem;border:1px solid #ddd;border-radius:8px;background:#fff;cursor:pointer;font-size:0.95rem;">No, Stay</button>
+                <button id="confirmAdminLogout" style="flex:1;padding:0.75rem;border:none;border-radius:8px;background:#dc3545;color:#fff;cursor:pointer;font-size:0.95rem;">Yes, Logout</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    document.getElementById('cancelAdminLogout').addEventListener('click', () => modal.remove());
+    document.getElementById('confirmAdminLogout').addEventListener('click', async () => {
+        modal.remove();
+        try {
+            sessionStorage.removeItem('isAdmin');
+            sessionStorage.removeItem('adminEmail');
+            await signOut(auth);
+        } catch (e) {
+            // Ignore signOut errors
+        }
+        window.location.href = 'login.html';
+    });
+
+    // Close on backdrop click
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+}
 
 // Export admin manager functions
 window.adminManager = {
     approveUser,
     blockUser,
     unblockUser,
-    updateOrderStatus
+    updateOrderStatus,
+    deleteUser,
+    clearDatabase
 };
 
 // Initialize on page load

@@ -39,6 +39,9 @@ signupForm.addEventListener('submit', async (e) => {
         // Create user in Firebase Authentication
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
+
+        // Force token refresh so Firestore rules recognize the new auth state
+        await user.getIdToken(true);
         
         // Create user document in Firestore
         await addDoc(collection(db, 'users'), {
@@ -95,4 +98,3 @@ function showMessage(message, type) {
     // Scroll to message
     messageDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
-

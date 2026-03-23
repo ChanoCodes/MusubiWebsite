@@ -3,6 +3,9 @@ import { auth, db } from './firebase.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 import { collection, addDoc, doc, setDoc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
+// Maximum total musubi per order
+const MAX_ORDER_LIMIT = 30;
+
 // Product data
 const PRODUCTS = {
     'special-musubi': { name: 'Special Musubi', price: 45, id: 'special-musubi' },
@@ -105,6 +108,13 @@ function setupAddToCartButtons() {
 
 // Add item to cart
 function addToCart(productId, productName, price) {
+    // Check total quantity across all cart items
+    const currentTotal = cart.reduce((sum, item) => sum + item.quantity, 0);
+    if (currentTotal >= MAX_ORDER_LIMIT) {
+        showCartLimitError();
+        return;
+    }
+
     const existingItem = cart.find(item => item.id === productId);
     
     if (existingItem) {
@@ -134,6 +144,17 @@ function removeFromCart(productId) {
 function updateQuantity(productId, newQuantity) {
     if (newQuantity <= 0) {
         removeFromCart(productId);
+        return;
+    }
+
+    // Check new total won't exceed limit
+    const currentTotal = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const currentItem = cart.find(item => item.id === productId);
+    const currentItemQty = currentItem ? currentItem.quantity : 0;
+    const newTotal = currentTotal - currentItemQty + newQuantity;
+
+    if (newTotal > MAX_ORDER_LIMIT) {
+        showCartLimitError();
         return;
     }
     
@@ -174,13 +195,24 @@ function calculateTotals() {
 function showCartPanel() {
     const cartPanel = document.getElementById('cartPanel');
     const overlay = document.querySelector('.cart-panel-overlay');
-    
+    const orderNowBtn = document.querySelector('.order-now-btn');
+
     if (cartPanel) {
         if (overlay) overlay.style.display = 'block';
+        if (orderNowBtn) orderNowBtn.style.visibility = 'hidden'; // Hide Order Now when cart is open
         cartPanel.style.display = 'flex';
         setTimeout(() => {
             cartPanel.classList.add('show');
         }, 10);
+
+        // Ensure close button works — attach listener fresh each time
+        const closeBtn = cartPanel.querySelector('.cart-panel-close');
+        if (closeBtn) {
+            // Remove old listener to prevent duplicates then re-add
+            const newCloseBtn = closeBtn.cloneNode(true);
+            closeBtn.parentNode.replaceChild(newCloseBtn, closeBtn);
+            newCloseBtn.addEventListener('click', () => hideCartPanel());
+        }
     }
 }
 
@@ -188,9 +220,11 @@ function showCartPanel() {
 function hideCartPanel() {
     const cartPanel = document.getElementById('cartPanel');
     const overlay = document.querySelector('.cart-panel-overlay');
-    
+    const orderNowBtn = document.querySelector('.order-now-btn');
+
     if (cartPanel) {
         if (overlay) overlay.style.display = 'none';
+        if (orderNowBtn) orderNowBtn.style.visibility = 'visible'; // Restore Order Now button
         cartPanel.classList.remove('show');
         setTimeout(() => {
             cartPanel.style.display = 'none';
@@ -392,6 +426,26 @@ function updateCartPanel() {
     if (cartTotal) cartTotal.textContent = `₱${totals.total.toFixed(0)}`;
 }
 
+// Show cart limit error message in cart panel
+function showCartLimitError() {
+    // Remove existing error if any
+    const existing = document.getElementById('cartLimitError');
+    if (existing) existing.remove();
+
+    const errDiv = document.createElement('div');
+    errDiv.id = 'cartLimitError';
+    errDiv.style.cssText = 'color: #721C24; background: #F8D7DA; border: 1px solid #F5C6CB; padding: 0.6rem 1rem; border-radius: 6px; margin: 0.5rem 1rem; font-size: 0.9rem; text-align: center;';
+    errDiv.textContent = 'Max order is 30 only.';
+
+    const cartBody = document.querySelector('.cart-panel-body');
+    if (cartBody) {
+        cartBody.insertAdjacentElement('afterbegin', errDiv);
+        setTimeout(() => { if (errDiv.parentNode) errDiv.remove(); }, 3000);
+    }
+
+    showCartPanel(); // Ensure cart is visible so user sees the error
+}
+
 // Pre-order functionality
 async function preOrder() {
     if (!currentUser) {
@@ -401,6 +455,13 @@ async function preOrder() {
     
     if (cart.length === 0) {
         alert('Your cart is empty.');
+        return;
+    }
+
+    // Final frontend guard: total quantity must not exceed limit
+    const totalQty = cart.reduce((sum, item) => sum + item.quantity, 0);
+    if (totalQty > MAX_ORDER_LIMIT) {
+        showCartLimitError();
         return;
     }
     
@@ -499,4 +560,3 @@ if (document.readyState === 'loading') {
 } else {
     initCart();
 }
-
