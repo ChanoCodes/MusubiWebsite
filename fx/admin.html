@@ -1,0 +1,1868 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdnjs.cloudflare.com https://apis.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self' https://www.gstatic.com https://cdnjs.cloudflare.com https://apis.google.com https://*.googleapis.com https://*.firebaseio.com https://*.firebasestorage.app https://*.firebaseapp.com https://securetoken.googleapis.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://date.nager.at; worker-src blob:; frame-src 'self' https://apis.google.com https://*.firebaseapp.com; object-src 'none';">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Dark mode anti-flicker: must run before any CSS renders -->
+    <script>if(localStorage.getItem('sbp_dark')==='1')document.documentElement.setAttribute('data-theme','dark');</script>
+    <title>SB Polangui | Admin Portal</title>
+    <link rel="icon" type="image/x-icon" href="images/SB_logo.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Resource hints: tell the browser to resolve Firebase + CDN hostnames early,
+         before the deferred scripts even start downloading. Cuts ~150-300ms on mobile. -->
+    <link rel="dns-prefetch" href="https://www.gstatic.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://firestore.googleapis.com">
+    <link rel="dns-prefetch" href="https://identitytoolkit.googleapis.com">
+    <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./page-enhancements.css" />
+    <link rel="stylesheet" href="./dashboard-enhancements.css" />
+  </head>
+
+  <body data-page="admin">
+    <div class="app-shell">
+
+      <!-- ════════════════════════════════
+           SIDEBAR
+      ════════════════════════════════ -->
+      <aside class="sidebar" id="main-sidebar">
+        <div class="sidebar-header">
+          <img src="images/SB_logo.png" alt="SB Polangui" class="sidebar-logo-img"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+          <div class="sidebar-logo-circle" style="display:none">SB</div>
+          <div class="sidebar-title">
+            <span class="sidebar-title-small">Admin Portal</span>
+            <span class="sidebar-title-main">Sangguniang Bayan</span>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <div class="sidebar-nav-label">Navigation</div>
+          <a href="#" class="nav-link nav-link-active" data-section="dashboard">
+            <span class="nav-link-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+            </span>
+            <span>Dashboard</span>
+          </a>
+
+          <div class="sidebar-nav-label" style="margin-top:14px">Communications</div>
+          <a href="#" class="nav-link" data-section="announcements">
+            <span class="nav-link-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+            </span>
+            <span>Announcements</span>
+            <span class="nav-notif-badge" id="announce-count-badge" style="display:none">0</span>
+          </a>
+
+          <div class="sidebar-nav-label" style="margin-top:14px">User Management</div>
+          <a href="#" class="nav-link" data-section="meeting-logs">
+            <span class="nav-link-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </span>
+            <span>Meeting Logs</span>
+            <span class="nav-notif-badge" id="pending-badge">0</span>
+          </a>
+          <a href="#" class="nav-link" data-section="user-management">
+            <span class="nav-link-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+            </span>
+            <span>Accounts</span>
+          </a>
+          <a href="#" class="nav-link" data-section="admin-management">
+            <span class="nav-link-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/><path d="M15.54 8.46a5 5 0 010 7.07M8.46 8.46a5 5 0 000 7.07"/></svg>
+            </span>
+            <span>System Settings</span>
+          </a>
+        </nav>
+
+        <footer class="sidebar-footer">
+          <div class="sidebar-avatar sidebar-avatar-admin" id="sidebar-avatar">A</div>
+          <div class="sidebar-footer-info">
+            <div class="sidebar-footer-name" id="sidebar-user">Administrator</div>
+            <div class="sidebar-footer-role" id="sidebar-role">Admin</div>
+          </div>
+        </footer>
+      </aside>
+
+      <!-- ════════════════════════════════
+           CONTENT AREA
+      ════════════════════════════════ -->
+      <div class="content-area">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+          <div class="topbar-left">
+            <div id="topbar-section-title" class="topbar-section-title">Dashboard</div>
+          </div>
+          <div class="topbar-right">
+            <!-- Global Search -->
+            <div class="global-search-wrap" id="global-search-wrap">
+              <button class="global-search-trigger" id="global-search-trigger" title="Search (Ctrl+K)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <span class="global-search-trigger-label">Search…</span>
+                <kbd class="global-search-kbd">⌘K</kbd>
+              </button>
+              <div class="global-search-dropdown" id="global-search-dropdown">
+                <div class="global-search-input-wrap">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" class="global-search-icon"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  <input type="text" id="global-search-input" class="global-search-input" placeholder="Search meetings, users, statuses…" autocomplete="off" spellcheck="false" />
+                  <button class="global-search-clear" id="global-search-clear" title="Clear">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  </button>
+                </div>
+                <div class="global-search-results" id="global-search-results">
+                  <div class="global-search-empty">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <span>Start typing to search…</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button class="dark-toggle" id="dark-toggle-btn" title="Toggle dark mode">
+              <svg id="dark-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+            </button>
+            <div style="position:relative">
+              <button class="notif-bell-btn" id="notif-bell" title="Notifications">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+              </button>
+              <span id="notif-badge"></span>
+              <div class="notif-panel" id="notif-panel">
+                <div class="notif-panel-header">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+                  Notifications
+                </div>
+                <div id="notif-list"></div>
+              </div>
+            </div>
+            <button id="logout-btn" class="btn btn-danger btn-sm">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              <span class="logout-label">Sign Out</span>
+            </button>
+          </div>
+        </header>
+
+        <!-- MAIN SCROLL -->
+        <main class="main-scroll section-stack">
+
+          <!-- ══════════════════════════
+               DASHBOARD
+          ══════════════════════════ -->
+          <div id="section-dashboard" class="admin-section active">
+
+            <!-- Welcome + date banner -->
+            <div class="dash-welcome-banner">
+              <div class="dash-welcome-left">
+                <div class="dash-welcome-greeting" id="dash-greeting">Good morning</div>
+                <div class="dash-welcome-title">Welcome back, <span id="dash-admin-name">Administrator</span></div>
+                <div class="dash-welcome-sub" id="dash-date-str"></div>
+              </div>
+              <div class="dash-welcome-right">
+                <div class="dash-quick-actions">
+                  <button class="dash-quick-btn" onclick="document.querySelector('[data-section=meeting-logs]').click()">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    View Calendar
+                  </button>
+                  <button class="dash-quick-btn dash-quick-btn-primary" onclick="document.querySelector('[data-section=user-management]').click()">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+                    Add User
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Monthly cleanup banner -->
+            <div id="cleanup-card" style="display:none;">
+              <div class="cleanup-banner">
+                <div class="cleanup-banner-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+                </div>
+                <div class="cleanup-banner-text">
+                  <div class="cleanup-banner-title">Monthly Cleanup Available</div>
+                  <div class="cleanup-banner-sub">Export last month's meetings and archive them to keep the database fast.</div>
+                </div>
+                <button id="export-archive-btn" class="btn btn-primary">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Export &amp; Archive
+                </button>
+              </div>
+            </div>
+
+            <!-- Stat cards -->
+            <div class="dash-stat-row">
+              <div class="dash-stat-card">
+                <div class="stat-accent-bar stat-accent-blue"></div>
+                <div class="stat-card-inner">
+                  <div class="stat-card-body">
+                    <div class="stat-label">Total Meetings</div>
+                    <div id="stat-total-meetings" class="stat-value"><span class="skeleton skeleton-stat-value"></span></div>
+                    <div class="stat-sub">
+                      <span class="stat-trend stat-trend-up" id="stat-total-trend" style="display:none">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                        <span id="stat-total-trend-val"></span>
+                      </span>
+                      All time records
+                    </div>
+                  </div>
+                  <div class="stat-card-icon stat-icon-blue">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  </div>
+                </div>
+              </div>
+              <div class="dash-stat-card" id="stat-pending-card">
+                <div class="stat-accent-bar stat-accent-amber"></div>
+                <div class="stat-card-inner">
+                  <div class="stat-card-body">
+                    <div class="stat-label">Pending Requests</div>
+                    <div id="stat-pending-meetings" class="stat-value"><span class="skeleton skeleton-stat-value"></span></div>
+                    <div class="stat-sub">
+                      <span id="stat-pending-cta" style="display:none;cursor:pointer;color:var(--brand-amber);font-weight:600;text-decoration:underline" onclick="if(typeof switchSection==='function'){switchSection('meeting-logs');switchMeetingTab('requests');}else{var l=document.querySelector('[data-section=meeting-logs]');if(l)l.click();}">Review now →</span>
+                      <span id="stat-pending-none">No pending items</span>
+                    </div>
+                  </div>
+                  <div class="stat-card-icon stat-icon-amber">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                  </div>
+                </div>
+              </div>
+              <div class="dash-stat-card">
+                <div class="stat-accent-bar stat-accent-green"></div>
+                <div class="stat-card-inner">
+                  <div class="stat-card-body">
+                    <div class="stat-label">Active Users</div>
+                    <div id="stat-active-users" class="stat-value"><span class="skeleton skeleton-stat-value"></span></div>
+                    <div class="stat-sub">Non-admin accounts</div>
+                  </div>
+                  <div class="stat-card-icon stat-icon-green">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+                  </div>
+                </div>
+              </div>
+              <div class="dash-stat-card">
+                <div class="stat-accent-bar stat-accent-purple"></div>
+                <div class="stat-card-inner">
+                  <div class="stat-card-body">
+                    <div class="stat-label">Next 7 Days</div>
+                    <div id="stat-upcoming-week" class="stat-value"><span class="skeleton skeleton-stat-value"></span></div>
+                    <div class="stat-sub">Upcoming meetings</div>
+                  </div>
+                  <div class="stat-card-icon stat-icon-purple">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Upcoming meetings preview -->
+            <div class="chart-card">
+              <div class="chart-card-title">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Upcoming Approved Meetings
+                <span class="dash-see-all" onclick="switchSection('meeting-logs');switchMeetingTab('requests');">See all →</span>
+              </div>
+              <div id="upcoming-meetings-preview" class="upcoming-preview-list">
+                <div class="skeleton-list-item"><span class="skeleton skeleton-list-dot"></span><div class="skeleton-list-body"><span class="skeleton skeleton-list-title" style="width:55%"></span><span class="skeleton skeleton-list-sub" style="width:75%"></span></div><span class="skeleton skeleton-list-badge"></span></div>
+                <div class="skeleton-list-item"><span class="skeleton skeleton-list-dot"></span><div class="skeleton-list-body"><span class="skeleton skeleton-list-title" style="width:65%"></span><span class="skeleton skeleton-list-sub" style="width:50%"></span></div><span class="skeleton skeleton-list-badge"></span></div>
+                <div class="skeleton-list-item"><span class="skeleton skeleton-list-dot"></span><div class="skeleton-list-body"><span class="skeleton skeleton-list-title" style="width:45%"></span><span class="skeleton skeleton-list-sub" style="width:70%"></span></div><span class="skeleton skeleton-list-badge"></span></div>
+                <div class="skeleton-list-item"><span class="skeleton skeleton-list-dot"></span><div class="skeleton-list-body"><span class="skeleton skeleton-list-title" style="width:70%"></span><span class="skeleton skeleton-list-sub" style="width:40%"></span></div><span class="skeleton skeleton-list-badge"></span></div>
+              </div>
+            </div>
+
+            <!-- Charts row -->
+            <div class="dashboard-grid">
+              <div class="chart-card donut-chart-card">
+                <div class="chart-card-title">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  Meetings by Status
+                </div>
+                <div class="donut-wrap">
+                  <div class="donut-svg-wrap" style="position:relative;flex-shrink:0;">
+                    <svg id="donut-svg" class="donut-svg" width="160" height="160" viewBox="0 0 160 160">
+                      <circle cx="80" cy="80" r="60" fill="none" stroke="var(--color-border)" stroke-width="20"/>
+                      <g id="donut-segments"><circle cx="80" cy="80" r="60" fill="none" stroke="var(--color-border)" stroke-width="20" id="donut-skeleton-arc"/></g>
+                    </svg>
+                    <div id="donut-center-wrap" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;line-height:1.1;">
+                      <div id="donut-center-text" style="font-size:1.65rem;font-weight:800;color:var(--color-text);font-family:var(--font-display);letter-spacing:-0.03em;">–</div>
+                      <div style="font-size:0.62rem;font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;">total</div>
+                    </div>
+                  </div>
+                  <div class="donut-legend" id="donut-legend">
+                    <div class="skeleton-legend-row"><span class="skeleton skeleton-legend-dot"></span><span class="skeleton skeleton-legend-text" style="width:90px"></span></div>
+                    <div class="skeleton-legend-row"><span class="skeleton skeleton-legend-dot"></span><span class="skeleton skeleton-legend-text" style="width:70px"></span></div>
+                    <div class="skeleton-legend-row"><span class="skeleton skeleton-legend-dot"></span><span class="skeleton skeleton-legend-text" style="width:80px"></span></div>
+                  </div>
+                </div>
+              </div>
+              <div class="chart-card">
+                <div class="chart-card-title">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                  Meetings by Type
+                </div>
+                <div class="chart-wrap">
+                  <div class="bar-chart" id="type-bar-chart"><div class="skeleton-bar-wrap">
+                    <div class="skeleton-bar-group"><div class="skeleton skeleton-bar-col" style="height:75%"></div><div class="skeleton skeleton-bar-label"></div></div>
+                    <div class="skeleton-bar-group"><div class="skeleton skeleton-bar-col" style="height:45%"></div><div class="skeleton skeleton-bar-label"></div></div>
+                    <div class="skeleton-bar-group"><div class="skeleton skeleton-bar-col" style="height:90%"></div><div class="skeleton skeleton-bar-label"></div></div>
+                    <div class="skeleton-bar-group"><div class="skeleton skeleton-bar-col" style="height:55%"></div><div class="skeleton skeleton-bar-label"></div></div>
+                    <div class="skeleton-bar-group"><div class="skeleton skeleton-bar-col" style="height:30%"></div><div class="skeleton skeleton-bar-label"></div></div>
+                  </div>
+                </div>
+                </div>
+              </div>
+              <div class="chart-card" style="grid-column: 1 / -1;">
+                <div class="chart-card-title">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  Monthly Meeting Activity (This Year)
+                </div>
+                <div class="chart-wrap" style="min-height: 200px; height: auto; overflow: visible;">
+                  <div class="bar-chart" id="monthly-bar-chart" style="height:160px; overflow:visible; padding-bottom:28px;"><div class="skeleton-bar-wrap" style="height:140px">
+                    <div class="skeleton-bar-group"><div class="skeleton skeleton-bar-col" style="height:40%"></div><div class="skeleton skeleton-bar-label"></div></div>
+                    <div class="skeleton-bar-group"><div class="skeleton skeleton-bar-col" style="height:60%"></div><div class="skeleton skeleton-bar-label"></div></div>
+                    <div class="skeleton-bar-group"><div class="skeleton skeleton-bar-col" style="height:80%"></div><div class="skeleton skeleton-bar-label"></div></div>
+                    <div class="skeleton-bar-group"><div class="skeleton skeleton-bar-col" style="height:50%"></div><div class="skeleton skeleton-bar-label"></div></div>
+                    <div class="skeleton-bar-group"><div class="skeleton skeleton-bar-col" style="height:100%"></div><div class="skeleton skeleton-bar-label"></div></div>
+                    <div class="skeleton-bar-group"><div class="skeleton skeleton-bar-col" style="height:70%"></div><div class="skeleton skeleton-bar-label"></div></div>
+                    <div class="skeleton-bar-group"><div class="skeleton skeleton-bar-col" style="height:45%"></div><div class="skeleton skeleton-bar-label"></div></div>
+                    <div class="skeleton-bar-group"><div class="skeleton skeleton-bar-col" style="height:90%"></div><div class="skeleton skeleton-bar-label"></div></div>
+                    <div class="skeleton-bar-group"><div class="skeleton skeleton-bar-col" style="height:55%"></div><div class="skeleton skeleton-bar-label"></div></div>
+                    <div class="skeleton-bar-group"><div class="skeleton skeleton-bar-col" style="height:35%"></div><div class="skeleton skeleton-bar-label"></div></div>
+                    <div class="skeleton-bar-group"><div class="skeleton skeleton-bar-col" style="height:65%"></div><div class="skeleton skeleton-bar-label"></div></div>
+                    <div class="skeleton-bar-group"><div class="skeleton skeleton-bar-col" style="height:20%"></div><div class="skeleton skeleton-bar-label"></div></div>
+                  </div>
+                </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recent activity -->
+            <div class="chart-card">
+              <div class="chart-card-title">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Recent Activity
+              </div>
+              <div class="activity-list" id="activity-list">
+                <div class="skeleton-list-item"><span class="skeleton skeleton-list-dot"></span><div class="skeleton-list-body"><span class="skeleton skeleton-list-title" style="width:55%"></span><span class="skeleton skeleton-list-sub" style="width:75%"></span></div></div>
+                <div class="skeleton-list-item"><span class="skeleton skeleton-list-dot"></span><div class="skeleton-list-body"><span class="skeleton skeleton-list-title" style="width:65%"></span><span class="skeleton skeleton-list-sub" style="width:50%"></span></div></div>
+                <div class="skeleton-list-item"><span class="skeleton skeleton-list-dot"></span><div class="skeleton-list-body"><span class="skeleton skeleton-list-title" style="width:45%"></span><span class="skeleton skeleton-list-sub" style="width:70%"></span></div></div>
+                <div class="skeleton-list-item"><span class="skeleton skeleton-list-dot"></span><div class="skeleton-list-body"><span class="skeleton skeleton-list-title" style="width:70%"></span><span class="skeleton skeleton-list-sub" style="width:40%"></span></div></div>
+                <div class="skeleton-list-item"><span class="skeleton skeleton-list-dot"></span><div class="skeleton-list-body"><span class="skeleton skeleton-list-title" style="width:50%"></span><span class="skeleton skeleton-list-sub" style="width:60%"></span></div></div>
+              </div>
+            </div>
+
+            <!-- Announcements preview -->
+            <div class="chart-card">
+              <div class="chart-card-title">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+                Latest Announcements
+                <span class="dash-see-all" onclick="document.querySelector('[data-section=announcements]').click()">Manage →</span>
+              </div>
+              <div id="dash-admin-announce-preview" style="padding:0 4px">
+                <div class="skeleton-announce-item"><div class="skeleton-announce-header"><span class="skeleton skeleton-announce-avatar"></span><div class="skeleton-announce-meta"><span class="skeleton skeleton-announce-title" style="width:55%"></span><span class="skeleton skeleton-announce-date"></span></div></div><span class="skeleton skeleton-announce-body"></span><span class="skeleton skeleton-announce-body-short"></span></div>
+                <div class="skeleton-announce-item"><div class="skeleton-announce-header"><span class="skeleton skeleton-announce-avatar"></span><div class="skeleton-announce-meta"><span class="skeleton skeleton-announce-title" style="width:55%"></span><span class="skeleton skeleton-announce-date"></span></div></div><span class="skeleton skeleton-announce-body"></span><span class="skeleton skeleton-announce-body-short"></span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ══════════════════════════
+               USER MANAGEMENT
+          ══════════════════════════ -->
+          <div id="section-user-management" class="admin-section">
+            <div class="page-header">
+              <div>
+                <div class="page-header-title">User Management</div>
+                <div class="page-header-sub">Manage all user accounts. Regular users: Councilor (max 30), Researcher (max 20). Special accounts: Vice Mayor (max 5), Secretary (max 5).</div>
+              </div>
+            </div>
+
+            <!-- ── SPECIAL ACCOUNTS ── -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title-wrap">
+                  <div class="card-title-icon" style="background:rgba(109,40,217,0.1);color:#6d28d9">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  </div>
+                  <div>
+                    <div class="card-title">Special Accounts</div>
+                    <div class="card-subtitle">Vice Mayor and Secretary — behave as users but have dedicated accounts. Max <strong>5</strong> Vice Mayors, <strong>5</strong> Secretaries.</div>
+                  </div>
+                </div>
+                <div class="search-bar-wrap">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  <input id="search-users" class="field" placeholder="Search all users…" />
+                </div>
+              </div>
+
+              <!-- Special account creation form -->
+              <form id="special-account-form" class="user-form-grid" autocomplete="off" style="background:rgba(109,40,217,0.03);border-bottom:1px solid var(--color-border-soft)">
+                <div>
+                  <label for="special-username" class="field-label">Username</label>
+                  <input id="special-username" class="field" required placeholder="e.g. santos" />
+                  <div id="special-username-preview" class="helper-text" style="margin-top:4px;min-height:16px"></div>
+                </div>
+                <div>
+                  <label for="special-name" class="field-label">Full Name</label>
+                  <input id="special-name" class="field" required placeholder="e.g. Maria Santos" />
+                </div>
+                <div>
+                  <label for="special-password" class="field-label">Password</label>
+                  <input id="special-password" type="password" class="field" required placeholder="Min. 6 characters" />
+                  <div class="pwd-strength-wrap" id="special-pwd-strength" style="display:none">
+                    <div class="pwd-strength-bar"><div class="pwd-strength-fill" id="special-pwd-fill"></div></div>
+                    <span class="pwd-strength-label" id="special-pwd-label"></span>
+                  </div>
+                </div>
+                <div>
+                  <label for="special-confirm" class="field-label">Confirm Password</label>
+                  <input id="special-confirm" type="password" class="field" required placeholder="Re-enter password" />
+                </div>
+                <div>
+                  <label for="special-role" class="field-label">Role</label>
+                  <select id="special-role" class="field">
+                    <option value="Vice Mayor">Vice Mayor</option>
+                    <option value="Secretary">Secretary</option>
+                  </select>
+                </div>
+                <div style="display:flex;align-items:flex-end">
+                  <button type="submit" class="btn btn-primary" style="width:100%;background:linear-gradient(135deg,#6d28d9,#7c3aed)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>
+                    Create Special Account
+                  </button>
+                </div>
+                <div class="helper-text" id="special-form-message"></div>
+              </form>
+
+              <div class="table-wrapper" style="margin-top:8px">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Username</th><th>Full Name</th><th>Role</th><th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="special-accounts-table-body">
+                    <tr><td><span class="skeleton" style="display:inline-block;height:11px;width:60%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:45%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:70%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:50%;border-radius:4px"></span></td></tr>
+                    <tr><td><span class="skeleton" style="display:inline-block;height:11px;width:45%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:70%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:50%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:65%;border-radius:4px"></span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- ── REGULAR USERS ── -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title-wrap">
+                  <div class="card-title-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                  </div>
+                  <div>
+                    <div class="card-title">Regular User Accounts</div>
+                    <div class="card-subtitle">
+                      Councilor and Researcher accounts — max <strong>30</strong> Councilors, <strong>20</strong> Researchers.
+                      &nbsp;<span id="user-count-badge" style="font-size:0.75rem;font-weight:500;color:var(--color-text-muted);background:var(--color-bg);border:1px solid var(--color-border);border-radius:999px;padding:1px 10px;vertical-align:middle">0 / 50 users</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <form id="user-form" class="user-form-grid" autocomplete="off">
+                <div>
+                  <label for="user-username" class="field-label">Username</label>
+                  <input id="user-username" class="field" required placeholder="e.g. noble" />
+                  <div id="user-username-preview" class="helper-text" style="margin-top:4px;min-height:16px"></div>
+                </div>
+                <div>
+                  <label for="user-name" class="field-label">Full Name</label>
+                  <input id="user-name" class="field" required placeholder="e.g. Juan dela Cruz" />
+                </div>
+                <div>
+                  <label for="user-password" class="field-label">Password</label>
+                  <input id="user-password" type="password" class="field" required placeholder="Min. 6 characters" />
+                  <div class="pwd-strength-wrap" id="user-pwd-strength" style="display:none">
+                    <div class="pwd-strength-bar"><div class="pwd-strength-fill" id="user-pwd-fill"></div></div>
+                    <span class="pwd-strength-label" id="user-pwd-label"></span>
+                  </div>
+                </div>
+                <div>
+                  <label for="user-confirm" class="field-label">Confirm Password</label>
+                  <input id="user-confirm" type="password" class="field" required placeholder="Re-enter password" />
+                </div>
+                <div>
+                  <label for="user-role" class="field-label">Role</label>
+                  <select id="user-role" class="field">
+                    <option value="Councilor">Councilor</option>
+                    <option value="Researcher">Researcher</option>
+                  </select>
+                </div>
+                <div style="display:flex;align-items:flex-end">
+                  <button type="submit" class="btn btn-primary" style="width:100%">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>
+                    Create Account
+                  </button>
+                </div>
+                <div class="helper-text" id="user-form-message"></div>
+              </form>
+
+              <div class="table-wrapper" style="margin-top:8px">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Username</th><th>Full Name</th><th>Role</th><th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="user-table-body">
+                    <tr><td><span class="skeleton" style="display:inline-block;height:11px;width:60%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:45%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:70%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:50%;border-radius:4px"></span></td></tr>
+                    <tr><td><span class="skeleton" style="display:inline-block;height:11px;width:45%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:70%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:50%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:65%;border-radius:4px"></span></td></tr>
+                    <tr><td><span class="skeleton" style="display:inline-block;height:11px;width:70%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:50%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:65%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:60%;border-radius:4px"></span></td></tr>
+                    <tr><td><span class="skeleton" style="display:inline-block;height:11px;width:50%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:65%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:60%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:45%;border-radius:4px"></span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div id="users-pagination" class="pagination-row"></div>
+            </div>
+          </div>
+
+          <!-- ══════════════════════════
+               MEETING LOGS
+          ══════════════════════════ -->
+          <div id="section-meeting-logs" class="admin-section">
+            <div class="page-header">
+              <div>
+                <div class="page-header-title" id="meeting-logs-title">Meeting Logs</div>
+                <div class="page-header-sub" id="meeting-logs-sub">View the calendar and manage all meeting requests.</div>
+              </div>
+            </div>
+
+            <!-- ── Sub-tab bar ── -->
+            <div class="meeting-subtab-bar">
+              <button class="meeting-subtab meeting-subtab-active" data-subtab="calendar" onclick="switchMeetingTab('calendar')">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Meeting Logs
+              </button>
+              <button class="meeting-subtab" data-subtab="requests" onclick="switchMeetingTab('requests')">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+                Meeting Requests
+                <span id="subtab-pending-badge" style="display:none;background:#f59e0b;color:#fff;font-size:0.6rem;font-weight:700;padding:1px 6px;border-radius:999px;margin-left:4px;"></span>
+              </button>
+            </div>
+
+            <!-- ══ TAB: MEETING LOGS (Calendar) ══ -->
+            <div id="meeting-subtab-calendar" class="meeting-subtab-panel">
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-title-wrap">
+                    <div class="card-title-icon">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    </div>
+                    <div>
+                      <div class="card-title">Meeting Calendar</div>
+                      <div class="card-subtitle">Click a date to schedule. Use the table below to approve or reject.</div>
+                    </div>
+                  </div>
+                  <div class="calendar-legend">
+                    <span class="calendar-legend-item"><span class="icon-dot" style="background:#2563EB"></span> Ongoing</span>
+                    <span class="calendar-legend-item"><span class="icon-dot" style="background:#16A34A"></span> Approved</span>
+                    <span class="calendar-legend-item"><span class="icon-dot" style="background:#F59E0B"></span> Pending</span>
+                    <span class="calendar-legend-item"><span class="icon-dot" style="background:#8B5CF6"></span> Admin</span>
+                    <span class="calendar-legend-item"><span class="icon-dot" style="background:#3B82F6;opacity:0.8"></span> Done</span>
+                    <span class="calendar-legend-item"><span class="icon-dot" style="background:#FCD34D;border:1px solid #F59E0B;box-sizing:border-box"></span> PH Holiday</span>
+                    <span class="calendar-legend-item"><span style="width:8px;height:8px;border-radius:3px;background:#DC2626;display:inline-block;flex-shrink:0"></span> Full</span>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div class="calendar-header-row">
+                    <button id="calendar-prev" class="cal-nav-btn" title="Previous month">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                    </button>
+                    <div class="calendar-month-label">
+                      <span id="calendar-month"></span>
+                      <span id="calendar-year"></span>
+                    </div>
+                    <button id="calendar-today" class="btn btn-ghost btn-sm" style="font-size:0.75rem;padding:5px 12px">Today</button>
+                    <button id="calendar-next" class="cal-nav-btn" title="Next month">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                    </button>
+                  </div>
+                  <div class="calendar-weekdays">
+                    <div class="calendar-weekday">Sun</div>
+                    <div class="calendar-weekday">Mon</div>
+                    <div class="calendar-weekday">Tue</div>
+                    <div class="calendar-weekday">Wed</div>
+                    <div class="calendar-weekday">Thu</div>
+                    <div class="calendar-weekday">Fri</div>
+                    <div class="calendar-weekday">Sat</div>
+                  </div>
+                  <div id="calendar-grid" class="calendar-grid"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ══ TAB: MEETING REQUESTS (Table) ══ -->
+            <div id="meeting-subtab-requests" class="meeting-subtab-panel" style="display:none;">
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-title-wrap">
+                    <div class="card-title-icon">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+                    </div>
+                    <div>
+                      <div class="card-title">All Meeting Requests</div>
+                      <div class="card-subtitle">Approve, reject, or cancel meeting requests.</div>
+                    </div>
+                  </div>
+                  <div class="filter-row">
+                    <div class="search-bar-wrap">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                      <input id="search-admin-meetings" class="field" placeholder="Search meetings…" />
+                    </div>
+                    <select id="filter-type-admin" class="field" style="width:auto;min-width:140px;">
+                      <option value="all">All Types</option>
+                      <option value="Regular Session">Regular Session</option>
+                      <option value="Special Session">Special Session</option>
+                      <option value="Others">Others</option>
+                    </select>
+                    <select id="filter-status-admin" class="field" style="width:auto;min-width:130px;">
+                      <option value="all">All Statuses</option>
+                      <option value="Pending">Pending</option>
+                      <option value="Approved">Approved</option>
+                      <option value="Rejected">Rejected</option>
+                      <option value="Cancelled">Cancelled</option>
+                      <option value="Done">Done</option>
+                    </select>
+                    <button id="btn-export-csv" class="btn btn-sm btn-ghost" title="Export visible rows to CSV">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      Export CSV
+                    </button>
+                    <button id="btn-print-table" class="btn btn-sm btn-ghost" title="Print meeting records as a formatted table report">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                      Print Report
+                    </button>
+                  </div>
+                </div>
+                <div class="table-wrapper admin-meetings-table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Event</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Requested By</th>
+                        <th>Notes</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="admin-meetings-body">
+                      <tr><td><span class="skeleton" style="display:inline-block;height:11px;width:60%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:45%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:70%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:50%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:65%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:60%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:45%;border-radius:4px"></span></td></tr>
+                      <tr><td><span class="skeleton" style="display:inline-block;height:11px;width:45%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:70%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:50%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:65%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:60%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:45%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:70%;border-radius:4px"></span></td></tr>
+                      <tr><td><span class="skeleton" style="display:inline-block;height:11px;width:70%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:50%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:65%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:60%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:45%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:70%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:50%;border-radius:4px"></span></td></tr>
+                      <tr><td><span class="skeleton" style="display:inline-block;height:11px;width:50%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:65%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:60%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:45%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:70%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:50%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:65%;border-radius:4px"></span></td></tr>
+                      <tr><td><span class="skeleton" style="display:inline-block;height:11px;width:65%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:60%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:45%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:70%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:50%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:65%;border-radius:4px"></span></td><td><span class="skeleton" style="display:inline-block;height:11px;width:60%;border-radius:4px"></span></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <!-- Mobile card list (hidden on desktop via CSS) -->
+                <div id="admin-meetings-cards" class="admin-meetings-cards-wrap"></div>
+                <div id="admin-meetings-pagination" class="pagination-row"></div>
+              </div>
+            </div>
+
+          </div>
+          <!-- ══════════════════════════
+               ADMIN MANAGEMENT
+          ══════════════════════════ -->
+          <div id="section-admin-management" class="admin-section">
+            <div class="page-header">
+              <div>
+                <div class="page-header-title">System Settings</div>
+                <div class="page-header-sub">Manage data, accounts, and system configuration — all without opening Firebase.</div>
+              </div>
+            </div>
+
+            <!-- ── DATA OVERVIEW ─────────────────────────────── -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title-wrap">
+                  <div class="card-title-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                  </div>
+                  <div>
+                    <div class="card-title">Data Overview</div>
+                    <div class="card-subtitle">Live counts from Firestore / local storage.</div>
+                  </div>
+                </div>
+                <button class="btn btn-sm btn-ghost" id="sysdata-refresh-btn">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+                  Refresh
+                </button>
+              </div>
+              <div class="card-body" style="padding:0">
+                <div id="sysdata-stats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0">
+                  <div style="padding:16px 18px;border-right:1px solid var(--color-border-soft)"><span class="skeleton" style="display:block;height:9px;width:70px;border-radius:4px;margin-bottom:10px"></span><span class="skeleton" style="display:block;height:28px;width:50px;border-radius:6px;margin-bottom:6px"></span><span class="skeleton" style="display:block;height:8px;width:90px;border-radius:4px"></span></div>
+                  <div style="padding:16px 18px;border-right:1px solid var(--color-border-soft)"><span class="skeleton" style="display:block;height:9px;width:70px;border-radius:4px;margin-bottom:10px"></span><span class="skeleton" style="display:block;height:28px;width:50px;border-radius:6px;margin-bottom:6px"></span><span class="skeleton" style="display:block;height:8px;width:90px;border-radius:4px"></span></div>
+                  <div style="padding:16px 18px;border-right:1px solid var(--color-border-soft)"><span class="skeleton" style="display:block;height:9px;width:70px;border-radius:4px;margin-bottom:10px"></span><span class="skeleton" style="display:block;height:28px;width:50px;border-radius:6px;margin-bottom:6px"></span><span class="skeleton" style="display:block;height:8px;width:90px;border-radius:4px"></span></div>
+                  <div style="padding:16px 18px;border-right:1px solid var(--color-border-soft)"><span class="skeleton" style="display:block;height:9px;width:70px;border-radius:4px;margin-bottom:10px"></span><span class="skeleton" style="display:block;height:28px;width:50px;border-radius:6px;margin-bottom:6px"></span><span class="skeleton" style="display:block;height:8px;width:90px;border-radius:4px"></span></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ── EDIT USER PROFILES ─────────────────────────── -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title-wrap">
+                  <div class="card-title-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                  </div>
+                  <div>
+                    <div class="card-title">Edit User Profiles</div>
+                    <div class="card-subtitle">Change a user's display name or role directly in the database.</div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body" style="padding:16px 20px">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+                  <div>
+                    <label class="field-label">Select User</label>
+                    <select id="edit-user-select" class="field">
+                      <option value="">— choose a user —</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="field-label">Full Name</label>
+                    <input id="edit-user-name" class="field" placeholder="Display name" />
+                  </div>
+                  <div>
+                    <label class="field-label">Username</label>
+                    <input id="edit-user-username" class="field" placeholder="Login username" />
+                  </div>
+                  <div>
+                    <label class="field-label">Role</label>
+                    <select id="edit-user-role" class="field">
+                      <option value="Councilor">Councilor</option>
+                      <option value="Researcher">Researcher</option>
+                      <option value="Vice Mayor">Vice Mayor</option>
+                      <option value="Secretary">Secretary</option>
+                    </select>
+                  </div>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <button class="btn btn-primary" id="edit-user-save-btn" disabled>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    Save Changes
+                  </button>
+                  <span id="edit-user-msg" class="helper-text"></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- ── FORCE PASSWORD RESET ───────────────────────── -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title-wrap">
+                  <div class="card-title-icon" style="background:rgba(245,158,11,0.1);color:#d97706">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                  </div>
+                  <div>
+                    <div class="card-title">Force Password Reset</div>
+                    <div class="card-subtitle">Flag a user so they must change password on next login.</div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body" style="padding:16px 20px">
+                <div style="display:grid;grid-template-columns:1fr auto;gap:12px;align-items:flex-end">
+                  <div>
+                    <label class="field-label">Select User</label>
+                    <select id="force-reset-select" class="field">
+                      <option value="">— choose a user —</option>
+                    </select>
+                  </div>
+                  <button class="btn btn-sm" id="force-reset-btn" disabled style="background:rgba(245,158,11,0.12);color:#d97706;border:1px solid rgba(245,158,11,0.3);white-space:nowrap">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                    Flag for Reset
+                  </button>
+                </div>
+                <p class="helper-text" style="margin-top:8px">The user will be prompted to set a new password the next time they log in.</p>
+              </div>
+            </div>
+
+            <!-- ── MEETING DATA TOOLS ─────────────────────────── -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title-wrap">
+                  <div class="card-title-icon" style="background:rgba(99,102,241,0.1);color:#6366f1">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                  </div>
+                  <div>
+                    <div class="card-title">Meeting Data Tools</div>
+                    <div class="card-subtitle">Bulk operations on meeting records.</div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body" style="padding:16px 20px;display:flex;flex-wrap:wrap;gap:10px">
+                <button class="btn btn-sm btn-ghost" id="sysdata-export-all-btn">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Export All Meetings (CSV)
+                </button>
+                <button class="btn btn-sm btn-ghost" id="sysdata-export-users-btn">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Export Users List (CSV)
+                </button>
+              </div>
+            </div>
+
+            <!-- ── SYSTEM MAINTENANCE ────────────────────────── -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title-wrap">
+                  <div class="card-title-icon" style="background:rgba(239,68,68,0.09);color:#dc2626">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+                  </div>
+                  <div>
+                    <div class="card-title">System Maintenance</div>
+                    <div class="card-subtitle">Clean up junk records from Firebase. Approved meetings are never affected.</div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body" style="padding:16px 20px">
+                <p class="helper-text" style="margin-bottom:14px;line-height:1.6">
+                  Remove rejected &amp; cancelled requests to keep the database fast and tidy.
+                  <strong>Approved and Pending meetings will never be deleted.</strong>
+                </p>
+                <div style="display:flex;gap:10px;flex-wrap:wrap">
+                  <button class="btn btn-sm" id="sysdata-purge-junk-btn" style="background:rgba(239,68,68,0.08);color:#dc2626;border:1px solid rgba(239,68,68,0.25);">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+                    Purge Rejected &amp; Cancelled
+                  </button>
+                  <button class="btn btn-sm" id="sysdata-purge-approved-btn" style="background:rgba(234,88,12,0.08);color:#ea580c;border:1px solid rgba(234,88,12,0.25);">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18v4H3z"/><path d="M8 7v14M16 7v14"/></svg>
+                    Purge Approved &amp; Done
+                  </button>
+                  <button class="btn btn-sm btn-ghost" id="sysdata-clear-notifs-btn">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                    Clear All Notifications
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ══════════════════════════
+               ANNOUNCEMENTS
+          ══════════════════════════ -->
+          <div id="section-announcements" class="admin-section">
+            <div class="page-header">
+              <div>
+                <div class="page-header-title">Announcements</div>
+                <div class="page-header-sub">Post official notices and updates. All users will receive a notification and see announcements on their dashboard.</div>
+              </div>
+            </div>
+
+            <!-- Compose card -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title-wrap">
+                  <div class="card-title-icon" style="background:linear-gradient(135deg,rgba(245,158,11,0.15),rgba(251,191,36,0.1));color:#d97706">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                  </div>
+                  <div>
+                    <div class="card-title">Compose Announcement</div>
+                    <div class="card-subtitle">Posted announcements are visible to all users instantly.</div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                <form id="announce-form">
+                  <div class="form-grid-2" style="margin-bottom:14px">
+                    <div>
+                      <label class="field-label" for="ann-title">Title <span style="color:var(--color-danger)">*</span></label>
+                      <input id="ann-title" class="field" placeholder="e.g. Schedule Change for March Sessions" maxlength="120" />
+                    </div>
+                    <div>
+                      <label class="field-label" for="ann-type">Category</label>
+                      <select id="ann-type" class="field">
+                        <option value="general">General Info</option>
+                        <option value="important">Important Notice</option>
+                        <option value="reminder">Reminder</option>
+                        <option value="event">Upcoming Event</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div style="margin-bottom:14px">
+                    <label class="field-label" for="ann-body">Message <span style="color:var(--color-danger)">*</span></label>
+                    <textarea id="ann-body" class="field" rows="4" style="resize:vertical;min-height:96px" placeholder="Write your announcement here…"></textarea>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.85rem;color:var(--color-text);user-select:none">
+                      <input type="checkbox" id="ann-pinned" style="width:15px;height:15px;accent-color:#d97706;cursor:pointer" />
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="color:#d97706;flex-shrink:0"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                      <span>Pin to top of announcements</span>
+                    </label>
+                    <div id="ann-msg" class="helper-text" style="color:var(--color-danger);flex:1"></div>
+                    <button type="submit" id="ann-submit-btn" class="btn btn-primary">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                      Post Announcement
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- Posted list -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title-wrap">
+                  <div class="card-title-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+                  </div>
+                  <div>
+                    <div class="card-title">Posted Announcements</div>
+                    <div class="card-subtitle">Click the trash icon to delete. Deleted announcements are removed for all users.</div>
+                  </div>
+                </div>
+                <span id="ann-total-badge" style="font-size:0.78rem;color:var(--color-text-muted);font-weight:600"></span>
+              </div>
+              <div id="admin-announce-list" style="display:flex;flex-direction:column;padding:12px 16px;gap:10px">
+                <div class="skeleton-announce-item"><div class="skeleton-announce-header"><span class="skeleton skeleton-announce-avatar"></span><div class="skeleton-announce-meta"><span class="skeleton skeleton-announce-title" style="width:55%"></span><span class="skeleton skeleton-announce-date"></span></div></div><span class="skeleton skeleton-announce-body"></span><span class="skeleton skeleton-announce-body-short"></span></div>
+                <div class="skeleton-announce-item"><div class="skeleton-announce-header"><span class="skeleton skeleton-announce-avatar"></span><div class="skeleton-announce-meta"><span class="skeleton skeleton-announce-title" style="width:55%"></span><span class="skeleton skeleton-announce-date"></span></div></div><span class="skeleton skeleton-announce-body"></span><span class="skeleton skeleton-announce-body-short"></span></div>
+                <div class="skeleton-announce-item"><div class="skeleton-announce-header"><span class="skeleton skeleton-announce-avatar"></span><div class="skeleton-announce-meta"><span class="skeleton skeleton-announce-title" style="width:55%"></span><span class="skeleton skeleton-announce-date"></span></div></div><span class="skeleton skeleton-announce-body"></span><span class="skeleton skeleton-announce-body-short"></span></div>
+              </div>
+            </div>
+          </div>
+
+        </main>
+      </div>
+    </div>
+
+    <!-- ── Change Password Modal ── -->
+    <div id="password-modal" class="modal-backdrop">
+      <div class="modal">
+        <div class="modal-header">
+          <div class="modal-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Change Password
+          </div>
+          <button id="password-modal-close" class="btn btn-ghost btn-sm"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+        <form id="password-form">
+          <div class="modal-body section-stack">
+            <input type="hidden" id="password-user-id" />
+            <div>
+              <label for="password-new" class="field-label">New Password</label>
+              <div class="pw-wrap">
+                <input id="password-new" type="password" class="field" required placeholder="Min. 6 characters" style="padding-right:40px" />
+                <button type="button" class="pw-toggle" id="pw-new-toggle" aria-label="Toggle password visibility">
+                  <svg id="pw-new-eye-show" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg id="pw-new-eye-hide" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </button>
+              </div>
+              <div class="pwd-strength-wrap" id="chpwd-strength" style="display:none">
+                <div class="pwd-strength-bar"><div class="pwd-strength-fill" id="chpwd-fill"></div></div>
+                <span class="pwd-strength-label" id="chpwd-label"></span>
+              </div>
+            </div>
+            <div>
+              <label for="password-confirm" class="field-label">Confirm Password</label>
+              <div class="pw-wrap">
+                <input id="password-confirm" type="password" class="field" required placeholder="Re-enter new password" style="padding-right:40px" />
+                <button type="button" class="pw-toggle" id="pw-confirm-toggle" aria-label="Toggle confirm password visibility">
+                  <svg id="pw-confirm-eye-show" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg id="pw-confirm-eye-hide" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </button>
+              </div>
+            </div>
+            <div id="password-form-message" class="helper-text" style="color:var(--color-danger)"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="password-cancel-btn" class="btn btn-ghost btn-sm">Cancel</button>
+            <button type="submit" class="btn btn-primary btn-sm">Update Password</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ── Admin Management Modal ── -->
+    <div id="admin-mgmt-modal" class="modal-backdrop">
+      <div class="modal admin-mgmt-modal-inner">
+        <div class="modal-header">
+          <div class="modal-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Create New Admin Account
+          </div>
+          <button id="admin-mgmt-close" class="btn btn-ghost btn-sm">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <form id="admin-mgmt-form" autocomplete="off">
+          <div class="modal-body section-stack">
+
+            <!-- ── SECTION: Created By ─────────────────────────── -->
+            <div class="admin-mgmt-section-label">Created By</div>
+            <div class="admin-mgmt-creator-card" id="admin-mgmt-creator-card">
+              <div class="creator-avatar" id="admin-mgmt-creator-avatar">A</div>
+              <div class="creator-info">
+                <div class="creator-name" id="admin-mgmt-creator-name">Administrator</div>
+                <div class="creator-meta">
+                  <span id="admin-mgmt-creator-username">—</span>
+                  <span class="creator-dot">·</span>
+                  <span class="creator-role-badge">Admin</span>
+                </div>
+              </div>
+              <div class="creator-timestamp" id="admin-mgmt-creator-time"></div>
+            </div>
+
+            <!-- ── SECTION: New Admin Information ─────────────── -->
+            <div class="admin-mgmt-section-label" style="margin-top:4px">New Admin Information</div>
+
+            <!-- Full Name -->
+            <div>
+              <label for="admin-mgmt-name" class="field-label">Full Name <span style="color:#dc2626">*</span></label>
+              <input id="admin-mgmt-name" type="text" class="field" required placeholder="e.g. Juan Dela Cruz" autocomplete="off" />
+            </div>
+
+            <!-- Username -->
+            <div>
+              <label for="admin-mgmt-username" class="field-label">Username <span style="color:#dc2626">*</span></label>
+              <input id="admin-mgmt-username" type="text" class="field" required placeholder="e.g. admin_juan" autocomplete="off" />
+              <div id="admin-mgmt-username-preview" class="helper-text" style="margin-top:4px"></div>
+            </div>
+
+            <!-- Password fields — stacked on mobile, side by side on desktop -->
+            <div class="admin-mgmt-pw-grid">
+              <div>
+                <label for="admin-mgmt-new-password" class="field-label">Password <span style="color:#dc2626">*</span></label>
+                <input id="admin-mgmt-new-password" type="password" class="field" required placeholder="Min. 6 characters" autocomplete="new-password" />
+              </div>
+              <div>
+                <label for="admin-mgmt-confirm-password" class="field-label">Confirm Password <span style="color:#dc2626">*</span></label>
+                <input id="admin-mgmt-confirm-password" type="password" class="field" required placeholder="Repeat password" autocomplete="new-password" />
+              </div>
+            </div>
+
+            <!-- ── SECTION: Authorization ─────────────────────── -->
+            <div class="admin-mgmt-section-label" style="margin-top:4px">Authorization</div>
+
+            <!-- Justification -->
+            <div>
+              <label for="admin-mgmt-reason" class="field-label">Justification <span style="color:#dc2626">*</span></label>
+              <textarea id="admin-mgmt-reason" class="field" rows="2" required placeholder="State the reason for creating this Admin account…"></textarea>
+            </div>
+
+            <!-- Current admin password re-auth -->
+            <div>
+              <label for="admin-mgmt-password" class="field-label">Your Current Password <span style="color:#dc2626">*</span></label>
+              <input id="admin-mgmt-password" type="password" class="field" required placeholder="Confirm your identity" autocomplete="current-password" />
+              <div class="helper-text" style="margin-top:4px">Required to authorize creation of a new Admin account.</div>
+            </div>
+
+            <!-- Error message -->
+            <div id="admin-mgmt-error" class="admin-mgmt-error-box" style="display:none;"></div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="admin-mgmt-cancel" class="btn btn-ghost btn-sm">Cancel</button>
+            <button type="submit" id="admin-mgmt-submit" class="btn btn-primary btn-sm">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Create Admin
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ── Booking Modal ── -->
+    <div id="meeting-modal" class="modal-backdrop">
+      <div class="modal meeting-modal-wide">
+        <div class="modal-header">
+          <div class="modal-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <span id="meeting-modal-title">Schedule Meeting</span>
+          </div>
+          <button id="meeting-modal-close" class="btn btn-ghost btn-sm"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+        <form id="meeting-form">
+          <div class="modal-body section-stack">
+
+            <!-- Row 1: Event Name + Committee -->
+            <div class="form-grid-2">
+              <div>
+                <label for="meeting-event" class="field-label">Event Name *</label>
+                <input id="meeting-event" class="field" required placeholder="e.g. Budget Review Hearing" />
+              </div>
+              <div style="position:relative">
+                <label for="meeting-committee" class="field-label">Committee *</label>
+                <div class="committee-combo-wrap">
+                  <input id="meeting-committee" class="field committee-combo-input" required placeholder="Type or select a committee…" autocomplete="off" />
+                  <button type="button" class="committee-combo-arrow" tabindex="-1" aria-label="Show committees">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                  </button>
+                  <ul id="committee-dropdown" class="committee-dropdown" role="listbox" style="display:none"></ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Row 2: Type + Venue -->
+            <div class="form-grid-2">
+              <div>
+                <label for="meeting-type" class="field-label">Type of Meeting *</label>
+                <select id="meeting-type" class="field">
+                  <option value="Committee Meeting">Committee Meeting</option>
+                  <option value="Committee Hearing">Committee Hearing</option>
+                  <option value="Committee Deliberation">Committee Deliberation</option>
+                  <option value="Public Meeting">Public Meeting</option>
+                  <option value="Consultative Meeting">Consultative Meeting</option>
+                  <option value="Others">Others (Please Specify)</option>
+                </select>
+                <input id="meeting-type-other" class="field" placeholder="Please specify type…" style="display:none;margin-top:6px" />
+              </div>
+              <div>
+                <label for="meeting-venue" class="field-label">Venue *</label>
+                <select id="meeting-venue" class="field">
+                  <option value="SB Hall">SB Hall</option>
+                  <option value="Old SB Hall">Old SB Hall</option>
+                  <option value="ABC Hall">ABC Hall</option>
+                  <option value="Others">Others (Please Specify)</option>
+                </select>
+                <input id="meeting-venue-other" class="field" placeholder="Please specify venue…" style="display:none;margin-top:6px" />
+              </div>
+            </div>
+
+            <!-- Row 3: Councilor + Researcher -->
+            <div class="form-grid-2">
+              <div>
+                <label for="meeting-councilor" class="field-label">Councilor *</label>
+                <select id="meeting-councilor-select" class="field" style="display:none">
+                  <option value="">— Select Councilor —</option>
+                  <option value="N/A">N/A (No Councilor)</option>
+                </select>
+                <input id="meeting-councilor" class="field" placeholder="Full name" />
+              </div>
+              <div>
+                <label for="meeting-researcher" class="field-label">Researcher *</label>
+                <select id="meeting-researcher-select" class="field" style="display:none">
+                  <option value="">— Select Researcher —</option>
+                  <option value="N/A">N/A (No Researcher)</option>
+                </select>
+                <input id="meeting-researcher" class="field" placeholder="Full name" />
+              </div>
+            </div>
+
+            <!-- Row 4: Date + Time + Duration -->
+            <div class="form-grid-3">
+              <div>
+                <label for="meeting-date" class="field-label">Date *</label>
+                <input id="meeting-date" type="date" class="field" required />
+              </div>
+              <div>
+                <label for="meeting-time" class="field-label">Start Time *</label>
+                <select id="meeting-time" class="field" required></select>
+                <div id="time-slot-availability-hint" class="helper-text" style="margin-top:3px"></div>
+              </div>
+              <div>
+                <label for="meeting-duration" class="field-label">Duration *</label>
+                <select id="meeting-duration" class="field" required></select>
+                <div id="meeting-duration-hint" class="helper-text"></div>
+              </div>
+            </div>
+
+            <!-- Office hours info bar -->
+            <div class="meeting-time-infobar">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Office hours: Mon–Fri, 8:00 AM – 5:00 PM
+              <span id="meeting-end-preview" class="meeting-end-preview-val"></span>
+              <div id="meeting-infobar-hint" style="display:none"></div>
+              <div class="calendar-lunch-block" style="display:none"></div>
+            </div>
+
+            <!-- Row 5: Stakeholders (full width) -->
+            <div>
+              <label for="meeting-stakeholders" class="field-label">Stakeholders / External Participants *</label>
+              <input id="meeting-stakeholders" class="field" required placeholder="e.g. DILG, DSWD, Barangay Representatives (comma-separated)" />
+              <div class="helper-text" style="margin-top:3px">Required — list organizations or individuals attending from outside.</div>
+            </div>
+
+            <!-- Row 6: Notes -->
+            <div>
+              <label for="meeting-notes" class="field-label">Notes / Agenda</label>
+              <textarea id="meeting-notes" class="field" rows="2" style="resize:vertical" placeholder="Optional additional information or agenda items…"></textarea>
+            </div>
+
+            <div id="meeting-form-message" class="helper-text" style="color:var(--color-danger)"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="meeting-cancel-btn" class="btn btn-ghost btn-sm">Cancel</button>
+            <button type="submit" class="btn btn-primary btn-sm">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+              Review &amp; Submit
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ── Policy / T&C Modal ── -->
+    <div id="policy-modal" class="modal-backdrop" style="z-index:700">
+      <div class="modal policy-modal-inner">
+        <div class="policy-modal-header">
+          <div class="policy-modal-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div>
+            <div class="policy-modal-title">Scheduling Policies</div>
+            <div class="policy-modal-sub">Please read before submitting your request</div>
+          </div>
+        </div>
+
+        <div class="policy-meeting-summary" id="policy-meeting-summary">
+          <!-- Filled by JS -->
+        </div>
+
+        <div class="policy-rules-list">
+          <div class="policy-rule policy-rule-featured">
+            <div class="policy-rule-num">01</div>
+            <div class="policy-rule-body">
+              <strong>24-Hour Allowed Cancellation.</strong>
+              After submitting, you may cancel this request <span class="policy-highlight">within 24 hours</span> without admin approval — just go to My Meetings and click Cancel. After 24 hours, a cancellation request will be sent to the admin for review.
+            </div>
+          </div>
+          <div class="policy-rule">
+            <div class="policy-rule-num">02</div>
+            <div class="policy-rule-body">
+              <strong>Admin Approval Required.</strong>
+              Your meeting will stay as <em>Pending</em> until the admin approves or rejects it. You will be notified of the decision.
+            </div>
+          </div>
+          <div class="policy-rule">
+            <div class="policy-rule-num">03</div>
+            <div class="policy-rule-body">
+              <strong>Weekdays Only, Office Hours.</strong>
+              Meetings must be on Monday–Friday, between 8:00 AM and 5:00 PM. No bookings on Philippine public holidays.
+            </div>
+          </div>
+          <div class="policy-rule">
+            <div class="policy-rule-num">04</div>
+            <div class="policy-rule-body">
+              <strong>One Slot per Time Block.</strong>
+              Overlapping pending requests may be auto-cancelled if another meeting for the same time slot gets approved first.
+            </div>
+          </div>
+        </div>
+
+        <label class="policy-agree-row" id="policy-agree-label">
+          <input type="checkbox" id="policy-agree-check" />
+          <span class="policy-agree-checkbox"></span>
+          <span class="policy-agree-text">I have read and agree to the above scheduling policies.</span>
+        </label>
+        <div id="policy-agree-error" style="color:var(--color-danger);font-size:0.78rem;min-height:1.1em;padding:0 20px 4px"></div>
+
+        <div class="policy-modal-footer">
+          <button type="button" id="policy-modal-back" class="btn btn-ghost btn-sm">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+            Back to Form
+          </button>
+          <button type="button" id="policy-modal-confirm" class="btn btn-primary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 12l2 2 4-4"/><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>
+            Confirm &amp; Submit Request
+          </button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ── Archive Modal ── -->
+    <div id="archive-modal" class="modal-backdrop">
+      <div class="modal">
+        <div class="modal-header">
+          <div class="modal-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+            Export &amp; Archive Previous Month
+          </div>
+          <button id="archive-modal-close" class="btn btn-ghost btn-sm"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+        <div class="modal-body section-stack">
+          <div id="archive-summary" class="helper-text"></div>
+          <div>
+            <button id="archive-download-btn" class="btn btn-ghost btn-sm">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download PDF Report
+            </button>
+          </div>
+          <label style="display:flex;align-items:center;gap:8px;font-size:0.84rem;color:var(--color-text);cursor:pointer;">
+            <input type="checkbox" id="archive-confirm-check" />
+            I have downloaded the report.
+          </label>
+        </div>
+        <div class="modal-footer">
+          <button id="archive-cancel-btn" class="btn btn-ghost btn-sm">Cancel</button>
+          <button id="archive-run-btn" class="btn btn-danger btn-sm" disabled>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/></svg>
+            Confirm Archive
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile bottom nav -->
+    <nav class="bottom-nav">
+      <a href="#" class="bottom-nav-item bottom-nav-item-active" data-section="dashboard">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+        <span>Dashboard</span>
+      </a>
+      <a href="#" class="bottom-nav-item" data-section="announcements">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+        <span>Announce</span>
+      </a>
+      <a href="#" class="bottom-nav-item" data-section="meeting-logs">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span>Meetings</span>
+      </a>
+      <a href="#" class="bottom-nav-item" data-section="user-management">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        <span>Accounts</span>
+      </a>
+      <a href="#" class="bottom-nav-item" data-section="admin-management">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
+        <span>Settings</span>
+      </a>
+    </nav>
+
+
+    <script>
+      // MutationObserver — clears skeleton rows the instant app.js writes real content
+      (function() {
+        // Mobile guard: avoid observer overhead on real phones.
+        var isMobileDevice = false;
+        try { isMobileDevice = window.matchMedia('(pointer: coarse)').matches; } catch(e) {}
+        try { if (!isMobileDevice && navigator && navigator.maxTouchPoints && navigator.maxTouchPoints > 0) isMobileDevice = true; } catch(e) {}
+        try { if (!isMobileDevice && window.matchMedia('(hover: none)').matches) isMobileDevice = true; } catch(e) {}
+        if (!isMobileDevice) isMobileDevice = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || '');
+        if (isMobileDevice) return;
+
+        var WATCHED = [
+          'admin-meetings-body',
+          'user-table-body',
+          'special-accounts-table-body',
+          'admin-announce-list',
+          'sysdata-stats',
+          'upcoming-meetings-preview',
+          'activity-list',
+          'donut-legend',
+          'dash-admin-announce-preview',
+          'type-bar-chart',
+          'monthly-bar-chart',
+        ];
+        var obs = new MutationObserver(function(muts) {
+          muts.forEach(function(m) {
+            var t = m.target;
+            if (WATCHED.indexOf(t.id) !== -1) {
+              // If new nodes were added that aren't skeletons, remove any skeleton siblings
+              var hasRealContent = Array.from(t.children).some(function(c) {
+                return !c.classList.contains('skeleton') &&
+                       !c.classList.contains('skeleton-list-item') &&
+                       !c.classList.contains('skeleton-bar-wrap') &&
+                       !c.classList.contains('skeleton-announce-item') &&
+                       !c.classList.contains('skeleton-legend-row') &&
+                       c.tagName !== 'SPAN';
+              });
+              if (hasRealContent) {
+                Array.from(t.querySelectorAll('.skeleton, .skeleton-list-item, .skeleton-bar-wrap, .skeleton-announce-item, .skeleton-legend-row')).forEach(function(sk) {
+                  if (sk.parentNode === t) sk.parentNode.removeChild(sk);
+                });
+              }
+            }
+          });
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+          WATCHED.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) obs.observe(el, { childList: true });
+          });
+        });
+      })();
+    </script>
+    <!-- Scripts — defer keeps them non-blocking on mobile (parsed after HTML, executed in order) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" defer></script>
+    <script src="./firebase.js" defer></script>
+    <script src="./app.js" defer></script>
+
+    <!-- Section navigation -->
+    <script>
+  (function () {
+    var SECTION_TITLES = {
+      dashboard: 'Dashboard',
+      'user-management': 'Accounts',
+      'meeting-logs': 'Meeting Logs',
+      'meeting-requests': 'Meeting Requests',
+      'admin-management': 'System Settings',
+      announcements: 'Announcements'
+    };
+
+    // ── Sub-tab switcher for Meeting Logs section ──────────────────────────
+    function switchMeetingTab(tab) {
+      // Update tab buttons
+      document.querySelectorAll('.meeting-subtab').forEach(function(btn) {
+        btn.classList.toggle('meeting-subtab-active', btn.dataset.subtab === tab);
+      });
+      // Show/hide panels
+      var calPanel = document.getElementById('meeting-subtab-calendar');
+      var reqPanel = document.getElementById('meeting-subtab-requests');
+      if (calPanel) calPanel.style.display = tab === 'calendar' ? '' : 'none';
+      if (reqPanel) reqPanel.style.display = tab === 'requests'  ? '' : 'none';
+      // Update page header subtitle
+      var sub = document.getElementById('meeting-logs-sub');
+      if (sub) sub.textContent = tab === 'calendar'
+        ? 'View the calendar and manage all meeting requests.'
+        : 'Approve, reject, or cancel meeting requests.';
+      // Persist tab choice
+      try { sessionStorage.setItem('admin_meeting_tab', tab); } catch(e) {}
+    }
+    window.switchMeetingTab = switchMeetingTab;
+
+    // Restore last active meeting sub-tab on section load
+    function restoreMeetingTab() {
+      try {
+        var saved = sessionStorage.getItem('admin_meeting_tab') || 'calendar';
+        switchMeetingTab(saved);
+      } catch(e) { switchMeetingTab('calendar'); }
+    }
+
+    // Keep the pending badge in sync on the sub-tab button
+    function syncSubtabBadge() {
+      var mainBadge = document.getElementById('pending-badge');
+      var subBadge  = document.getElementById('subtab-pending-badge');
+      if (!subBadge) return;
+      var count = mainBadge ? parseInt(mainBadge.textContent, 10) || 0 : 0;
+      subBadge.textContent = count;
+      subBadge.style.display = count > 0 ? 'inline-flex' : 'none';
+    }
+
+    // Expose so app.js can call it after updating pending count
+    window.syncSubtabBadge = syncSubtabBadge;
+
+    function isFormDirty() {
+      var mf = document.getElementById('meeting-form');
+      if (mf && mf.dataset && mf.dataset.dirty === '1') return true;
+      var uf = document.getElementById('user-form');
+      if (uf && uf.dataset && uf.dataset.dirty === '1') return true;
+      return false;
+    }
+
+    function initDirtyTracking(id) {
+      var f = document.getElementById(id);
+      if (!f) return;
+      f.dataset.dirty = '0';
+      var inputs = f.querySelectorAll('input,select,textarea');
+      inputs.forEach(function (el) {
+        el.addEventListener('input', function () { f.dataset.dirty = '1'; });
+        el.addEventListener('change', function () { f.dataset.dirty = '1'; });
+      });
+    }
+
+    function switchSection(key) {
+      function doSwitch() {
+        document.querySelectorAll('.admin-section').forEach(function (el) { el.classList.remove('active'); });
+        var target = document.getElementById('section-' + key);
+        if (target) target.classList.add('active');
+        document.querySelectorAll('.nav-link[data-section]').forEach(function (a) {
+          a.classList.toggle('nav-link-active', a.dataset.section === key);
+        });
+        document.querySelectorAll('.bottom-nav-item[data-section]').forEach(function (a) {
+          a.classList.toggle('bottom-nav-item-active', a.dataset.section === key);
+        });
+        var titleEl = document.getElementById('topbar-section-title');
+        if (titleEl) titleEl.textContent = SECTION_TITLES[key] || key;
+        try { sessionStorage.setItem('admin_section', key); } catch(e){}
+        // Restore meeting sub-tab when entering meeting-logs
+        if (key === 'meeting-logs') { restoreMeetingTab(); syncSubtabBadge(); }
+      }
+      if (isFormDirty()) {
+        if (typeof openConfirmModal === 'function') {
+          openConfirmModal(
+            'Discard Unsaved Changes?',
+            '<p>You have unsaved changes. Leave without saving?</p>',
+            function () {
+              var mf = document.getElementById('meeting-form');
+              if (mf) { if (typeof mf.reset === 'function') mf.reset(); mf.dataset && (mf.dataset.dirty = '0'); }
+              var uf = document.getElementById('user-form');
+              if (uf) { if (typeof uf.reset === 'function') uf.reset(); uf.dataset && (uf.dataset.dirty = '0'); }
+              doSwitch();
+            },
+            function () {}
+          );
+          return;
+        }
+      }
+      doSwitch();
+    }
+
+    document.querySelectorAll('.nav-link[data-section]').forEach(function (a) {
+      a.addEventListener('click', function (e) { e.preventDefault(); switchSection(a.dataset.section); });
+    });
+    document.querySelectorAll('.bottom-nav-item[data-section]').forEach(function (a) {
+      a.addEventListener('click', function (e) { e.preventDefault(); switchSection(a.dataset.section); });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+      initDirtyTracking('meeting-form');
+      initDirtyTracking('user-form');
+      // Always land on dashboard when coming fresh from login
+      var fromLogin = sessionStorage.getItem('sbp_just_logged_in');
+      if (fromLogin) {
+        sessionStorage.removeItem('sbp_just_logged_in');
+        switchSection('dashboard');
+      } else {
+        try {
+          var saved = sessionStorage.getItem('admin_section');
+          if (saved && document.getElementById('section-' + saved)) { switchSection(saved); }
+          else { switchSection('dashboard'); }
+        } catch(e) { switchSection('dashboard'); }
+      }
+
+      // ── Live username preview ──────────────────────────────────────
+      var PREFIXES = { 'Councilor':'councilor_', 'Researcher':'researcher_', 'Vice Mayor':'vicemayor_', 'Secretary':'secretary_' };
+      function previewUsername(inputId, roleId, previewId) {
+        var inp  = document.getElementById(inputId);
+        var role = document.getElementById(roleId);
+        var pre  = document.getElementById(previewId);
+        if (!inp || !role || !pre) return;
+        function update() {
+          var raw = inp.value.trim().toLowerCase().replace(/\s+/g,'_');
+          var prefix = PREFIXES[role.value] || '';
+          if (!raw) { pre.textContent = ''; return; }
+          var stripped = raw.startsWith(prefix) ? raw.slice(prefix.length) : raw;
+          var final = prefix + stripped;
+          pre.innerHTML = 'Will be saved as: <strong style="color:var(--brand-blue)">' + final + '</strong>';
+        }
+        inp.addEventListener('input', update);
+        role.addEventListener('change', update);
+      }
+      previewUsername('user-username',    'user-role',    'user-username-preview');
+      previewUsername('special-username', 'special-role', 'special-username-preview');
+    });
+  })();
+</script>
+
+<script>
+  function clearAdminSkeletons() {
+    ['stat-total-meetings','stat-pending-meetings','stat-active-users','stat-upcoming-week'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) { var sk = el.querySelector('.skeleton'); if (sk) el.innerHTML = '0'; }
+    });
+    ['admin-meetings-body','user-table-body','special-accounts-table-body'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el && el.querySelector('.skeleton')) el.innerHTML = '';
+    });
+    var sd = document.getElementById('sysdata-stats');
+    if (sd && sd.querySelector('.skeleton')) sd.innerHTML = '';
+  }
+
+  function renderDashboardCharts() {
+    clearAdminSkeletons();
+    var mtgs = window.meetings || [];
+    var usrs = window.users || [];
+    var STATUS_COLORS = {
+      'Approved':'#16a34a','Pending':'#f59e0b','Cancelled':'#dc2626',
+      'Rejected':'#dc2626','Done':'#3b82f6','Cancellation Requested':'#f97316'
+    };
+    var statusCounts = {};
+    mtgs.forEach(function(m) { statusCounts[m.status] = (statusCounts[m.status] || 0) + 1; });
+    var statusKeys = Object.keys(statusCounts);
+    var total = mtgs.length || 1;
+    var segs = document.getElementById('donut-segments');
+    var legend = document.getElementById('donut-legend');
+    var centerText = document.getElementById('donut-center-text');
+    if (segs && legend) {
+      segs.innerHTML = ''; legend.innerHTML = '';
+      var skArc = document.getElementById('donut-skeleton-arc');
+      if (skArc) skArc.remove();
+      var r = 60, cx = 80, cy = 80, circ = 2 * Math.PI * r, offset = 0;
+      statusKeys.forEach(function(s) {
+        var count = statusCounts[s];
+        var pct = count / total;
+        var dash = pct * circ, gap = circ - dash;
+        var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', cx); circle.setAttribute('cy', cy); circle.setAttribute('r', r);
+        circle.setAttribute('fill', 'none');
+        circle.setAttribute('stroke', STATUS_COLORS[s] || '#9ca3af');
+        circle.setAttribute('stroke-width', '20');
+        circle.setAttribute('stroke-linecap', 'butt');
+        circle.setAttribute('stroke-dasharray', dash + ' ' + gap);
+        circle.setAttribute('stroke-dashoffset', -(offset - circ * 0.25));
+        circle.style.transition = 'stroke-dasharray 0.5s cubic-bezier(.4,0,.2,1)';
+        segs.appendChild(circle); offset += dash;
+        var pctLabel = total > 0 ? Math.round(pct * 100) + '%' : '';
+        var item = document.createElement('div');
+        item.className = 'donut-legend-item';
+        item.innerHTML =
+          '<span class="donut-dot" style="background:' + (STATUS_COLORS[s]||'#9ca3af') + ';width:10px;height:10px;border-radius:3px;flex-shrink:0"></span>' +
+          '<span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + s + '</span>' +
+          '<span style="font-weight:700;color:var(--color-text);margin-left:6px;flex-shrink:0">' + count + '</span>' +
+          '<span style="font-size:0.68rem;color:var(--color-text-muted);margin-left:4px;flex-shrink:0">(' + pctLabel + ')</span>';
+        legend.appendChild(item);
+      });
+      if (centerText) centerText.textContent = mtgs.length > 0 ? mtgs.length : '–';
+    }
+    var TYPE_COLORS = {
+      'Committee Meeting':      '#1d4ed8',
+      'Committee Hearing':      '#7c3aed',
+      'Committee Deliberation': '#0891b2',
+      'Public Meeting':         '#16a34a',
+      'Consultative Meeting':   '#d97706',
+      'Regular Session':        '#1d4ed8',
+      'Special Session':        '#7c3aed',
+      'Regular':                '#1d4ed8',
+      'Special':                '#7c3aed',
+      'Others':                 '#6b7280'
+    };
+    var typeCounts = {};
+    mtgs.forEach(function(m) { var t = m.type || m.meetingType || 'Other'; typeCounts[t] = (typeCounts[t] || 0) + 1; });
+    var typeKeys = Object.keys(typeCounts);
+    var typeMax = Math.max.apply(null, typeKeys.map(function(k){ return typeCounts[k]; })) || 1;
+    var typeChart = document.getElementById('type-bar-chart');
+    if (typeChart) {
+      typeChart.innerHTML = typeKeys.length
+        ? typeKeys.map(function(k) {
+            var pct = (typeCounts[k] / typeMax) * 100;
+            return '<div class="bar-group"><div class="bar" style="height:' + pct + '%;background:' + (TYPE_COLORS[k]||'#6b7280') + ';opacity:0.85;" data-val="' + typeCounts[k] + '"></div><div class="bar-label" title="' + k + '">' + k + '</div></div>';
+          }).join('')
+        : '<div class="text-muted" style="font-size:0.82rem;padding:12px">No data yet.</div>';
+    }
+    var nowYear = new Date().getFullYear();
+    var monthCounts = new Array(12).fill(0);
+    mtgs.forEach(function(m) {
+      if (!m.date) return;
+      var d = new Date(m.date);
+      if (d.getFullYear() === nowYear) monthCounts[d.getMonth()]++;
+    });
+    var MONTH_LABELS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var monthMax = Math.max.apply(null, monthCounts) || 1;
+    var monthChart = document.getElementById('monthly-bar-chart');
+    if (monthChart) {
+      monthChart.innerHTML = monthCounts.map(function(c, i) {
+        var pct = (c / monthMax) * 100;
+        var isCurrentMonth = i === new Date().getMonth();
+        return '<div class="bar-group"><div class="bar" style="height:' + pct + '%;background:' + (isCurrentMonth ? '#1d4ed8' : '#93c5fd') + ';opacity:0.9;" data-val="' + c + '"></div><div class="bar-label">' + MONTH_LABELS[i] + '</div></div>';
+      }).join('');
+    }
+    var activityList = document.getElementById('activity-list');
+    if (activityList) {
+      var sorted = mtgs.slice().sort(function(a, b) { return (b.createdAt || '').localeCompare(a.createdAt || ''); }).slice(0, 8);
+      if (!sorted.length) {
+        activityList.innerHTML = '<div class="empty-state"><svg class="empty-state-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><p>No recent activity.</p></div>';
+      } else {
+        var DOT_COLORS = { 'Approved':'#16a34a','Pending':'#f59e0b','Cancelled':'#dc2626','Rejected':'#dc2626','Done':'#3b82f6' };
+        activityList.innerHTML = sorted.map(function(m) {
+          var color = DOT_COLORS[m.status] || '#9ca3af';
+          var when = m.createdAt ? new Date(m.createdAt).toLocaleDateString('en-PH',{month:'short',day:'numeric',year:'numeric'}) : m.date;
+          return '<div class="activity-item"><span class="activity-dot" style="background:' + color + '"></span><div><div class="activity-text"><strong>' + (m.eventName||'Meeting') + '</strong> — ' + (m.status||'') + ' · ' + (m.createdBy||'') + '</div><div class="activity-time">' + when + '</div></div></div>';
+        }).join('');
+      }
+    }
+  }
+  window.renderDashboardCharts = renderDashboardCharts;
+
+  // ── Event-driven chart render (replaces setTimeout polling loop) ──
+  // Fires instantly when firebase.js dispatches 'sbp:dataready'.
+  // Single 1400ms fallback handles slow connections without hammering the CPU.
+  var _adminChartsRendered = false;
+  function renderAdminChartsOnce() {
+    if (_adminChartsRendered) return;
+    _adminChartsRendered = true;
+    renderDashboardCharts();
+  }
+
+  document.addEventListener('sbp:dataready', renderAdminChartsOnce);
+
+  document.addEventListener('DOMContentLoaded', function () {
+    setTimeout(function () {
+      if (!_adminChartsRendered) renderAdminChartsOnce();
+    }, 1400);
+  });
+</script>
+
+<script>
+  (function () {
+    var btn = document.getElementById('dark-toggle-btn');
+    var icon = document.getElementById('dark-icon');
+    var MOON = '<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>';
+    var SUN = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+    function applyTheme(dark) {
+      document.documentElement.setAttribute('data-theme', dark ? 'dark' : '');
+      if (icon) icon.innerHTML = dark ? SUN : MOON;
+      try { localStorage.setItem('sbp_dark', dark ? '1' : '0'); } catch(e) {}
+    }
+    applyTheme(localStorage.getItem('sbp_dark') === '1');
+    if (btn) btn.addEventListener('click', function() { applyTheme(document.documentElement.getAttribute('data-theme') !== 'dark'); });
+  })();
+</script>
+
+<script>
+  // ── Global Search (Admin) ─────────────────────────────────────────────────
+  (function () {
+    var wrap      = document.getElementById('global-search-wrap');
+    var trigger   = document.getElementById('global-search-trigger');
+    var dropdown  = document.getElementById('global-search-dropdown');
+    var input     = document.getElementById('global-search-input');
+    var results   = document.getElementById('global-search-results');
+    var clearBtn  = document.getElementById('global-search-clear');
+    var open      = false;
+    var debounceT = null;
+
+    var STATUS_COLORS = {
+      'Approved':'#16a34a','Pending':'#f59e0b','Cancelled':'#dc2626',
+      'Rejected':'#dc2626','Done':'#3b82f6','Cancellation Requested':'#f97316'
+    };
+
+    function esc(s) {
+      if (s == null) return '';
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function highlight(text, query) {
+      if (!query) return esc(text);
+      var re = new RegExp('(' + query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi');
+      return esc(text).replace(re, '<mark class="gs-hl">$1</mark>');
+    }
+
+    function openSearch() {
+      open = true;
+      wrap.classList.add('gs-open');
+      dropdown.style.display = 'flex';
+      setTimeout(function () { input.focus(); }, 30);
+    }
+
+    function closeSearch() {
+      open = false;
+      wrap.classList.remove('gs-open');
+      dropdown.style.display = 'none';
+      input.value = '';
+      clearBtn.style.display = 'none';
+      showEmpty();
+    }
+
+    function showEmpty(msg) {
+      results.innerHTML = '<div class="global-search-empty"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>' + (msg || 'Start typing to search…') + '</span></div>';
+    }
+
+    function doSearch(q) {
+      q = (q || '').trim();
+      clearBtn.style.display = q ? 'flex' : 'none';
+      if (!q) { showEmpty(); return; }
+
+      var meetings = window.meetings || [];
+      var users    = window.users    || [];
+      var lq = q.toLowerCase();
+
+      var mResults = meetings.filter(function(m) {
+        return [m.eventName, m.status, m.date, m.venue, m.type, m.meetingType, m.committee, m.councilor, m.researcher, m.createdBy, m.stakeholders]
+          .some(function(v) { return v && String(v).toLowerCase().includes(lq); });
+      }).slice(0, 8);
+
+      var uResults = users.filter(function(u) {
+        return [u.name, u.username, u.role]
+          .some(function(v) { return v && String(v).toLowerCase().includes(lq); });
+      }).slice(0, 4);
+
+      if (!mResults.length && !uResults.length) {
+        showEmpty('No results for "' + esc(q) + '"');
+        return;
+      }
+
+      var html = '';
+      if (mResults.length) {
+        html += '<div class="gs-group-label">Meetings</div>';
+        mResults.forEach(function(m) {
+          var color = STATUS_COLORS[m.status] || '#9ca3af';
+          var dateStr = m.date ? new Date(m.date + 'T00:00:00').toLocaleDateString('en-PH',{month:'short',day:'numeric',year:'numeric'}) : '';
+          html += '<button class="gs-item" data-type="meeting" data-section="meeting-logs">' +
+            '<span class="gs-item-icon gs-icon-meeting"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>' +
+            '<div class="gs-item-body">' +
+              '<div class="gs-item-title">' + highlight(m.eventName || 'Meeting', q) + '</div>' +
+              '<div class="gs-item-meta">' + esc(dateStr) + (m.venue ? ' · ' + esc(m.venue) : '') + (m.councilor && m.councilor !== 'N/A' ? ' · ' + esc(m.councilor) : '') + '</div>' +
+            '</div>' +
+            '<span class="gs-badge" style="background:' + color + '">' + esc(m.status) + '</span>' +
+          '</button>';
+        });
+      }
+      if (uResults.length) {
+        html += '<div class="gs-group-label">Users</div>';
+        uResults.forEach(function(u) {
+          html += '<button class="gs-item" data-type="user" data-section="user-management">' +
+            '<span class="gs-item-icon gs-icon-user"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>' +
+            '<div class="gs-item-body">' +
+              '<div class="gs-item-title">' + highlight(u.name || u.username, q) + '</div>' +
+              '<div class="gs-item-meta">@' + highlight(u.username, q) + ' · ' + esc(u.role) + '</div>' +
+            '</div>' +
+          '</button>';
+        });
+      }
+      results.innerHTML = html;
+
+      results.querySelectorAll('.gs-item').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var section = btn.getAttribute('data-section');
+          closeSearch();
+          if (section && typeof switchSection === 'function') switchSection(section);
+        });
+      });
+    }
+
+    trigger.addEventListener('click', function () { open ? closeSearch() : openSearch(); });
+
+    input.addEventListener('input', function () {
+      clearTimeout(debounceT);
+      debounceT = setTimeout(function () { doSearch(input.value); }, 120);
+    });
+
+    clearBtn.addEventListener('click', function () {
+      input.value = '';
+      clearBtn.style.display = 'none';
+      showEmpty();
+      input.focus();
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); open ? closeSearch() : openSearch(); }
+      if (e.key === 'Escape' && open) closeSearch();
+    });
+
+    document.addEventListener('mousedown', function (e) {
+      if (open && !wrap.contains(e.target)) closeSearch();
+    });
+  })();
+</script>
+
+<script>
+  // ── Back-button lock ─────────────────────────────────────────────────────
+  (function () {
+    // Disable lock on mobile so gesture navigation/pull-to-refresh stays reliable.
+    var isMobileDevice = false;
+    try { isMobileDevice = window.matchMedia('(pointer: coarse)').matches; } catch(e) {}
+    try { if (!isMobileDevice && navigator && navigator.maxTouchPoints && navigator.maxTouchPoints > 0) isMobileDevice = true; } catch(e) {}
+    try { if (!isMobileDevice && window.matchMedia('(hover: none)').matches) isMobileDevice = true; } catch(e) {}
+    if (!isMobileDevice) isMobileDevice = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || '');
+    if (isMobileDevice) return;
+
+    var LOCK_URL = window.location.href;
+    history.replaceState({ sbpLocked: true }, '', LOCK_URL);
+    history.pushState({ sbpLocked: true }, '', LOCK_URL);
+    window.addEventListener('popstate', function () {
+      history.pushState({ sbpLocked: true }, '', LOCK_URL);
+    });
+  })();
+</script>
+
+
+
+
+  </body>
+</html>
